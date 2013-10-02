@@ -158,6 +158,7 @@ public class Cube {
 		face[6] = 7;
 		face[7] = 8;
 		faces.put("R".charAt(0), face);
+		face = new int[8];
 		face[0] = 9;
 		face[1] = 10;
 		face[2] = 11;
@@ -167,6 +168,7 @@ public class Cube {
 		face[6] = 28;
 		face[7] = 29;
 		faces.put("G".charAt(0), face);
+		face = new int[8];
 		face[0] = 12;
 		face[1] = 13;
 		face[2] = 14;
@@ -176,6 +178,7 @@ public class Cube {
 		face[6] = 31;
 		face[7] = 32;
 		faces.put("Y".charAt(0), face);
+		face = new int[8];
 		face[0] = 15;
 		face[1] = 16;
 		face[2] = 17;
@@ -185,6 +188,7 @@ public class Cube {
 		face[6] = 34;
 		face[7] = 35;
 		faces.put("B".charAt(0), face);
+		face = new int[8];
 		face[0] = 36;
 		face[1] = 37;
 		face[2] = 38;
@@ -194,6 +198,7 @@ public class Cube {
 		face[6] = 43;
 		face[7] = 44;
 		faces.put("O".charAt(0), face);
+		face = new int[8];
 		face[0] = 45;
 		face[1] = 46;
 		face[2] = 47;
@@ -222,6 +227,7 @@ public class Cube {
 		side[10] = 52;
 		side[11] = 53;
 		sides.put("R".charAt(0), side);
+		side = new int[12];
 		side[0] = 0;
 		side[1] = 3;
 		side[2] = 6;
@@ -235,6 +241,7 @@ public class Cube {
 		side[10] = 48;
 		side[11] = 51;
 		sides.put("G".charAt(0), side);
+		side = new int[12];
 		side[0] = 6;
 		side[1] = 7;
 		side[2] = 8;
@@ -248,6 +255,7 @@ public class Cube {
 		side[10] = 37;
 		side[11] = 38;
 		sides.put("Y".charAt(0), side);
+		side = new int[12];
 		side[0] = 2;
 		side[1] = 5;
 		side[2] = 8;
@@ -261,6 +269,7 @@ public class Cube {
 		side[10] = 53;
 		side[11] = 54;
 		sides.put("B".charAt(0), side);
+		side = new int[12];
 		side[0] = 27;
 		side[1] = 28;
 		side[2] = 29;
@@ -274,6 +283,7 @@ public class Cube {
 		side[10] = 46;
 		side[11] = 47;
 		sides.put("O".charAt(0), side);
+		side = new int[12];
 		side[0] = 0;
 		side[1] = 1;
 		side[2] = 2;
@@ -344,6 +354,21 @@ public class Cube {
 		return false;
 	}
 
+	public boolean rotate(Character face, int turns) {
+		int[] thisFace = FACES.get(face);
+		// Error checking to verify that the given character is valid
+		// and in the map
+		if (thisFace == null) {
+			return false;
+		}
+
+		for (int i : thisFace) {
+			System.out.println(this.state.charAt(i));
+		}
+
+		return true;
+	}
+
 	public static void main(String[] args) {
 		Cube cube = null;
 		if (args.length <= 0) {
@@ -354,5 +379,6 @@ public class Cube {
 		System.out.println(cube.state);
 		System.out.println("Is a valid cube: " + cube.verifyCube());
 		System.out.print(cube.isSolved());
+		cube.rotate("R".charAt(0), 1);
 	}
 }
