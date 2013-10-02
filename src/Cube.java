@@ -32,7 +32,14 @@ public class Cube {
      * Each row represents a physical edge cubie on the Rubik's cube.
      * Each column in the row represents a location in the serialize version of the cube.
      */
-    public static int[][] edges = initEdges();
+    public static int[][] EDGES = initEdges();
+
+	/**
+	 * A Map<Character, int[]> where the key is the character of the
+	 * color of the face and the int[] is the indices of the string in
+	 * which the face represents.
+	 */
+	public static Map<Character, int[]> FACES = initFaces();
 
     /**
      * Initializes the state to an empty String.
@@ -129,6 +136,66 @@ public class Cube {
         return edges;
     }
 
+	private static Map<Character, int[]> initFaces() {
+		Map<Character, int[]> faces = new HashMap<Character, int[]>();
+		int[] face = new int[8];
+		face[0] = 0;
+		face[1] = 1;
+		face[2] = 2;
+		face[3] = 3;
+		face[4] = 5;
+		face[5] = 6;
+		face[6] = 7;
+		face[7] = 8;
+		faces.put("R".charAt(0), face);
+		face[0] = 9;
+		face[1] = 10;
+		face[2] = 11;
+		face[3] = 18;
+		face[4] = 20;
+		face[5] = 27;
+		face[6] = 28;
+		face[7] = 29;
+		faces.put("G".charAt(0), face);
+		face[0] = 12;
+		face[1] = 13;
+		face[2] = 14;
+		face[3] = 21;
+		face[4] = 23;
+		face[5] = 30;
+		face[6] = 31;
+		face[7] = 32;
+		faces.put("Y".charAt(0), face);
+		face[0] = 15;
+		face[1] = 16;
+		face[2] = 17;
+		face[3] = 24;
+		face[4] = 26;
+		face[5] = 33;
+		face[6] = 34;
+		face[7] = 35;
+		faces.put("B".charAt(0), face);
+		face[0] = 36;
+		face[1] = 37;
+		face[2] = 38;
+		face[3] = 39;
+		face[4] = 41;
+		face[5] = 42;
+		face[6] = 43;
+		face[7] = 44;
+		faces.put("O".charAt(0), face);
+		face[0] = 45;
+		face[1] = 46;
+		face[2] = 47;
+		face[3] = 48;
+		face[4] = 50;
+		face[5] = 51;
+		face[6] = 52;
+		face[7] = 53;
+		faces.put("W".charAt(0), face);
+		return faces;
+	}
+
     /**
      * Method for reading in a file to set up the initial
      * state of the Cube.
@@ -173,8 +240,13 @@ public class Cube {
     }
 
     public static void main(String[] args) {
-        Cube cube = new Cube(args[0]);
-        System.out.println(cube.state);
+	    Cube cube = null;
+	    if (args.length <= 0) {
+		    cube = new Cube("input1.txt");
+	    } else {
+            cube = new Cube(args[0]);
+	    }
+		System.out.println(cube.state);
         System.out.print(cube.isSolved());
     }
 }
