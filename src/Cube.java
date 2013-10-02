@@ -2,7 +2,6 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -57,6 +56,10 @@ public class Cube {
         this.state = "";
     }
 
+	/**
+	 * Initializes the Cube to the input of a file.
+	 * @param fileName the filepath of the text file that represents a cube
+	 */
     public Cube(String fileName) {
         this.state = this.readTextFile(fileName);
     }
@@ -203,7 +206,7 @@ public class Cube {
 		return faces;
 	}
 
-	private static Map<Character, int[]> initSides {
+	private static Map<Character, int[]> initSides() {
 		Map<Character, int[]> sides = new HashMap<Character, int[]>();
 		int[] side = new int[12];
 		side[0] = 9;
@@ -316,8 +319,19 @@ public class Cube {
                 }
             }
         }
-        return returnValue;
+        return returnValue.trim();
     }
+
+	/**
+	 * Verifies if the current state of the cube is valid.
+	 * @return true if state is valid, false if not.
+	 */
+	private boolean verifyCube() {
+		if (this.state.length() != 54) {
+			return false;
+		}
+		return true;
+	}
 
     /**
      * 
@@ -338,6 +352,7 @@ public class Cube {
             cube = new Cube(args[0]);
 	    }
 		System.out.println(cube.state);
+	    System.out.println("Is a valid cube: " + cube.verifyCube());
         System.out.print(cube.isSolved());
     }
 }
