@@ -374,6 +374,35 @@ public class Cube {
 		// Rotate the face
 		for (int i = 0; i < thisFace.length; i++) {
 			newStateArray[thisFace[(i + (2 * turns)) % 8]] = stateArray[thisFace[i]];
+			if (i % 2 == 0) {
+				// We have a corner
+				int[] thisCorner = null;
+				// Find the corner
+				// TODO: Optimize this
+				for (int[] corner : Cube.CORNERS) {
+					for (int cornerFace : corner) {
+						if (cornerFace == thisFace[i]) {
+							// This is the corner we want to rotate
+							thisCorner = corner;
+							break;
+						}
+					}
+				}
+			} else {
+				// We have an edge
+				int[] thisEdge = null;
+				// Find the edge
+				// TODO: Optimize this
+				for (int[] edge : Cube.EDGES) {
+					for (int edgeFace : edge) {
+						if (edgeFace == thisFace[i]) {
+							// This is the edge we want to rotate
+							thisEdge = edge;
+							break;
+						}
+					}
+				}
+			}
 		}
 
 		this.state = new String(newStateArray);
@@ -381,17 +410,47 @@ public class Cube {
 		return true;
 	}
 
+	/**
+	 * Super nice way to print out the cube in a 2D fashion
+	 * @return a string of the 2D representation of the cube
+	 */
+	public String toString() {
+		String result = "";
+
+		char[] stateArray = this.state.toCharArray();
+
+		for (int i = 0; i < stateArray.length; i++) {
+			if (i < 9 || i > 35) {
+				if (i % 3 == 0) {
+					result += "   " + stateArray[i];
+				} else if (i % 3 == 2) {
+					result += stateArray[i] + "\n";
+				} else {
+					result += stateArray[i];
+				}
+			} else {
+				if (i % 9 == 8) {
+					result += stateArray[i] + "\n";
+				} else {
+					result += stateArray[i];
+				}
+			}
+		}
+
+		return result;
+	}
+
 	public static void main(String[] args) {
 		Cube cube = null;
 		if (args.length <= 0) {
-			cube = new Cube("input2.txt");
+			cube = new Cube("input1.txt");
 		} else {
 			cube = new Cube(args[0]);
 		}
-		System.out.println(cube.state);
+		System.out.println(cube.toString());
 		System.out.println("Is a valid cube: " + cube.verifyCube());
 		System.out.println(cube.isSolved());
 		cube.rotate("R".charAt(0), 2);
-		System.out.println(cube.state);
+		System.out.println(cube.toString());
 	}
 }
