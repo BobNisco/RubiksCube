@@ -355,6 +355,10 @@ public class Cube {
 	}
 
 	public boolean rotate(Character face, int turns) {
+		// Turning it by any number of turns mod 4 would be wasting CPU cycles
+		if (turns % 4 == 0) {
+			return true;
+		}
 		int[] thisFace = FACES.get(face);
 		// Error checking to verify that the given character is valid
 		// and in the map
@@ -362,9 +366,17 @@ public class Cube {
 			return false;
 		}
 
-		for (int i : thisFace) {
-			System.out.println(this.state.charAt(i));
+		// Make a copy of the state array so we can reference it
+		char[] stateArray = this.state.toCharArray();
+		// An array representing the chars of the state after rotations
+		char[] newStateArray = this.state.toCharArray();
+
+		// Rotate the face
+		for (int i = 0; i < thisFace.length; i++) {
+			newStateArray[thisFace[(i + (2 * turns)) % 8]] = stateArray[thisFace[i]];
 		}
+
+		this.state = new String(newStateArray);
 
 		return true;
 	}
@@ -372,13 +384,14 @@ public class Cube {
 	public static void main(String[] args) {
 		Cube cube = null;
 		if (args.length <= 0) {
-			cube = new Cube("input1.txt");
+			cube = new Cube("input2.txt");
 		} else {
 			cube = new Cube(args[0]);
 		}
 		System.out.println(cube.state);
 		System.out.println("Is a valid cube: " + cube.verifyCube());
-		System.out.print(cube.isSolved());
-		cube.rotate("R".charAt(0), 1);
+		System.out.println(cube.isSolved());
+		cube.rotate("R".charAt(0), 2);
+		System.out.println(cube.state);
 	}
 }
