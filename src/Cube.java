@@ -195,7 +195,7 @@ public class Cube {
 		face[3] = 41;
 		face[4] = 44;
 		face[5] = 43;
-		face[6] = 43;
+		face[6] = 42;
 		face[7] = 39;
 		faces.put("O".charAt(0), face);
 		face = new int[8];
@@ -354,6 +354,12 @@ public class Cube {
 		return false;
 	}
 
+	/**
+	 * Does the actual rotation of a cube given the face and amount of clockwise turns.
+	 * @param face the character representing the color face to turn clockwise.
+	 * @param turns the number of clockwise turns.
+	 * @return true if rotate was successful, else false if there was an error.
+	 */
 	public boolean rotate(Character face, int turns) {
 		// Turning it by any number of turns mod 4 would be wasting CPU cycles
 		if (turns % 4 == 0) {
@@ -372,42 +378,92 @@ public class Cube {
 		char[] newStateArray = this.state.toCharArray();
 
 		// Rotate the face
+		// We will accomplish this by iterating over each color on the
+		// given face. We will determine if we have a corner or an edge cubie.
+		// Then, we will handle the 2 different types of cubies appropriately.
+		//
+		// Given a 2D drawing of a face of a cube,
+		//     GGW
+		//     R G
+		//     RRG
+		// We give each color an index value by starting with 0 in the top
+		// left (in this case, G) and each color after in a clockwise direction
+		// is i+1. Example:
+		//     012
+		//     3 4
+		//     567
+		// It is important to note that we do not include the center cubie
+		// in our faces since this cubie can not be moved.
+		int[][] theCorners = new int[4][3];
+		int[][] theEdges = new int[4][2];
 		for (int i = 0; i < thisFace.length; i++) {
-			newStateArray[thisFace[(i + (2 * turns)) % 8]] = stateArray[thisFace[i]];
 			if (i % 2 == 0) {
 				// We have a corner
-				int[] thisCorner = null;
-				// Find the corner
-				// TODO: Optimize this
-				for (int[] corner : Cube.CORNERS) {
-					for (int cornerFace : corner) {
-						if (cornerFace == thisFace[i]) {
-							// This is the corner we want to rotate
-							thisCorner = corner;
-							break;
-						}
-					}
-				}
+				findSimilarCubies(Cube.CORNERS, thisFace, theCorners, i);
+
 			} else {
 				// We have an edge
-				int[] thisEdge = null;
-				// Find the edge
-				// TODO: Optimize this
-				for (int[] edge : Cube.EDGES) {
-					for (int edgeFace : edge) {
-						if (edgeFace == thisFace[i]) {
-							// This is the edge we want to rotate
-							thisEdge = edge;
-							break;
-						}
-					}
-				}
+				findSimilarCubies(Cube.EDGES, thisFace, theEdges, i);
 			}
 		}
+
+		// Now let's do the swaps!
+		performSwap(theCorners, stateArray, newStateArray);
+		performSwap(theEdges, stateArray, newStateArray);
 
 		this.state = new String(newStateArray);
 
 		return true;
+	}
+
+	/**
+	 * Given the int[][] searchCubies which must be either CORNERS or EDGES,
+	 * this will search the two-dimensional array and find the CORNER or EDGE
+	 * in which cubies[i] belongs to.
+	 *
+	 * @param searchCubies CORNERS or EDGES which we will search through
+	 * @param cubies the possible cubies
+	 * @param theCubies the return set of cubies that we will later swap
+	 * @param i the current index
+	 */
+	private void findSimilarCubies(int[][] searchCubies, int[] cubies, int[][] theCubies, int i) {
+		// We have a corner
+		// Find the corner in the CORNERS static int[]
+		// TODO: Optimize this
+		for (int[] cubie : searchCubies) {
+			for (int face : cubie) {
+				if (face == cubies[i]) {
+					// Add this cubie to theCubies in which we will swap later on
+					theCubies[i / 2] = cubie;
+					break;
+				}
+			}
+		}
+	}
+
+	/**
+	 * Performs a swap of the given cubies. The cubies parameter MUST be all of type
+	 * EDGE or CORNER. It accomplishes this by iterating over each EDGE/CORNER
+	 * and each color on each EDGE/CORNER. It will look at the previous state of the cube
+	 * for the color in the given position and put that in the newStateArray.
+	 *
+	 * @param cubies an int[][] of all EDGEs or CORNERs that we will be swapping/rotating.
+	 * @param stateArray the state of the cube before any rotations/changes were made.
+	 * @param newStateArray the state of the cube that will be returned after all changes.
+	 */
+	private void performSwap(int[][] cubies, char[] stateArray, char[] newStateArray) {
+		// For each of the cubies
+		for (int i = 0; i < cubies.length; i++) {
+			// We are going to swap each color by finding the
+			// color of the next cubie and putting it into the newStateArray
+			for (int j = 0; j < cubies[i].length; j++) {
+				char movingCubieColor = stateArray[cubies[i][j]];
+				// The position in which we will be moving the cubie to.
+				int newCubiePosition = cubies[(i + 1) % 4][j];
+				// Perform the move
+				newStateArray[newCubiePosition] = movingCubieColor;
+			}
+		}
 	}
 
 	/**
@@ -443,7 +499,7 @@ public class Cube {
 	public static void main(String[] args) {
 		Cube cube = null;
 		if (args.length <= 0) {
-			cube = new Cube("input1.txt");
+			cube = new Cube("input2.txt");
 		} else {
 			cube = new Cube(args[0]);
 		}
