@@ -2,6 +2,8 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -366,103 +368,57 @@ public class Cube {
 			return true;
 		}
 		int[] thisFace = FACES.get(face);
+		int[] theSides = Cube.SIDES.get(face);
 		// Error checking to verify that the given character is valid
-		// and in the map
-		if (thisFace == null) {
+		// and in the map and that we got both theFace and theSide
+		if (thisFace == null || theSides == null) {
 			return false;
 		}
 
 		// Make a copy of the state array so we can reference it
-		char[] stateArray = this.state.toCharArray();
+		final char[] stateArray = this.state.toCharArray();
 		// An array representing the chars of the state after rotations
 		char[] newStateArray = this.state.toCharArray();
 
 		// Rotate the face
-		// We will accomplish this by iterating over each color on the
-		// given face. We will determine if we have a corner or an edge cubie.
-		// Then, we will handle the 2 different types of cubies appropriately.
-		//
-		// Given a 2D drawing of a face of a cube,
-		//     GGW
-		//     R G
-		//     RRG
-		// We give each color an index value by starting with 0 in the top
-		// left (in this case, G) and each color after in a clockwise direction
-		// is i+1. Example:
-		//     012
-		//     3 4
-		//     567
-		// It is important to note that we do not include the center cubie
-		// in our faces since this cubie can not be moved.
-		int[][] theCorners = new int[4][3];
-		int[][] theEdges = new int[4][2];
-		for (int i = 0; i < thisFace.length; i++) {
-			if (i % 2 == 0) {
-				// We have a corner
-				findSimilarCubies(Cube.CORNERS, thisFace, theCorners, i);
+		this.rotateFace(thisFace, turns, newStateArray, stateArray);
+		// Rotate the sides
+		this.rotateSide(theSides, turns, newStateArray, stateArray);
 
-			} else {
-				// We have an edge
-				findSimilarCubies(Cube.EDGES, thisFace, theEdges, i);
-			}
-		}
-
-		// Now let's do the swaps!
-		performSwap(theCorners, stateArray, newStateArray);
-		performSwap(theEdges, stateArray, newStateArray);
-
+		// Set the state to the newly rotated cube
 		this.state = new String(newStateArray);
-
+		// Return true because it was successful!
 		return true;
 	}
 
 	/**
-	 * Given the int[][] searchCubies which must be either CORNERS or EDGES,
-	 * this will search the two-dimensional array and find the CORNER or EDGE
-	 * in which cubies[i] belongs to.
-	 *
-	 * @param searchCubies CORNERS or EDGES which we will search through
-	 * @param cubies the possible cubies
-	 * @param theCubies the return set of cubies that we will later swap
-	 * @param i the current index
+	 * Internal handler to rotate a face of the cube
+	 * @param thisFace the int[] representing the face we are rotating.
+	 *                 Should be an element of the Cube.FACES
+	 * @param turns the amount of times we will be rotating the cube
+	 * @param newStateArray the array that will represent the state of
+	 *                      the cube after all rotations
+	 * @param stateArray a reference to the state of the cube before turning
 	 */
-	private void findSimilarCubies(int[][] searchCubies, int[] cubies, int[][] theCubies, int i) {
-		// We have a corner
-		// Find the corner in the CORNERS static int[]
-		// TODO: Optimize this
-		for (int[] cubie : searchCubies) {
-			for (int face : cubie) {
-				if (face == cubies[i]) {
-					// Add this cubie to theCubies in which we will swap later on
-					theCubies[i / 2] = cubie;
-					break;
-				}
-			}
+	private void rotateFace(int[] thisFace, int turns, char[] newStateArray, char[] stateArray) {
+		for (int i = 0; i < thisFace.length; i++) {
+			newStateArray[thisFace[(i + (2 * turns)) % 8]] = stateArray[thisFace[i]];
 		}
 	}
 
 	/**
-	 * Performs a swap of the given cubies. The cubies parameter MUST be all of type
-	 * EDGE or CORNER. It accomplishes this by iterating over each EDGE/CORNER
-	 * and each color on each EDGE/CORNER. It will look at the previous state of the cube
-	 * for the color in the given position and put that in the newStateArray.
-	 *
-	 * @param cubies an int[][] of all EDGEs or CORNERs that we will be swapping/rotating.
-	 * @param stateArray the state of the cube before any rotations/changes were made.
-	 * @param newStateArray the state of the cube that will be returned after all changes.
+	 * Internal handler to rotate a side of the cube
+	 * @param theSides the int[] representing the face we are rotating.
+	 *                 Should be an element of the Cube.SIDES
+	 * @param turns the amount of times we will be rotating the cube
+	 * @param newStateArray the array that will represent the state of
+	 *                      the cube after all rotations
+	 * @param stateArray a reference to the state of the cube before turning
 	 */
-	private void performSwap(int[][] cubies, char[] stateArray, char[] newStateArray) {
-		// For each of the cubies
-		for (int i = 0; i < cubies.length; i++) {
-			// We are going to swap each color by finding the
-			// color of the next cubie and putting it into the newStateArray
-			for (int j = 0; j < cubies[i].length; j++) {
-				char movingCubieColor = stateArray[cubies[i][j]];
-				// The position in which we will be moving the cubie to.
-				int newCubiePosition = cubies[(i + 1) % 4][j];
-				// Perform the move
-				newStateArray[newCubiePosition] = movingCubieColor;
-			}
+	private void rotateSide(int[] theSides, int turns, char[] newStateArray, char[] stateArray) {
+		for (int i = 0; i < theSides.length; i++) {
+			int moveInt = theSides[(i + (3 * turns)) % theSides.length];
+			newStateArray[moveInt] = stateArray[theSides[i]];
 		}
 	}
 
@@ -470,6 +426,7 @@ public class Cube {
 	 * Super nice way to print out the cube in a 2D fashion
 	 * @return a string of the 2D representation of the cube
 	 */
+	@Override
 	public String toString() {
 		String result = "";
 
@@ -499,7 +456,7 @@ public class Cube {
 	public static void main(String[] args) {
 		Cube cube = null;
 		if (args.length <= 0) {
-			cube = new Cube("input2.txt");
+			cube = new Cube("input1.txt");
 		} else {
 			cube = new Cube(args[0]);
 		}
