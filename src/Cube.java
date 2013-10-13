@@ -2,6 +2,7 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -420,6 +421,50 @@ public class Cube {
 		}
 	}
 
+	private String encodeCorners() {
+		Map<Integer, Integer> mappedCorners = mapCorners();
+		String result = "";
+		for (int i = 0; i < mappedCorners.size(); i++) {
+			if (mappedCorners.get(i) >= i) {
+				result += Integer.toString(mappedCorners.get(i) - i, Math.abs(i - 8));
+			} else {
+				result += Integer.toString(mappedCorners.get(i), Math.abs(i - 8));
+			}
+		}
+		System.out.println(result);
+		return result;
+	}
+
+	private Map<Integer, Integer> mapCorners() {
+		Map<Integer, Integer> result = new HashMap<Integer, Integer>();
+		for (int i = 0; i < Cube.CORNERS.length; i++) {
+			String searchingFor = "";
+			for (int s : Cube.CORNERS[i]) {
+				searchingFor += Cube.GOAL.charAt(s);
+			}
+			char[] chars = searchingFor.toCharArray();
+			Arrays.sort(chars);
+			searchingFor = new String(chars);
+			// Now we know what colors we're looking for
+			for(int j = 0; j < Cube.CORNERS.length; j++) {
+				String haystack = "";
+				for (int s : Cube.CORNERS[j]) {
+					haystack += this.state.charAt(s);
+				}
+				char[] chars2 = haystack.toCharArray();
+				Arrays.sort(chars2);
+				haystack = new String(chars2);
+				if (haystack.equals(searchingFor)) {
+					result.put(i, j);
+				}
+			}
+		}
+		for (int i = 0; i < result.size(); i++) {
+			System.out.println( i + " : " + result.get(i));
+		}
+		return result;
+	}
+
 	/**
 	 * Super nice way to print out the cube in a 2D fashion
 	 * @return a string of the 2D representation of the cube
@@ -462,6 +507,7 @@ public class Cube {
 		System.out.println("Is a valid cube: " + cube.verifyCube());
 		System.out.println(cube.isSolved());
 		cube.rotate("R".charAt(0), 2);
+		cube.encodeCorners();
 		System.out.println(cube.toString());
 	}
 }
