@@ -49,6 +49,13 @@ public class Cube {
 	public static Map<Character, int[]> SIDES = initSides();
 
 	/**
+	 * A Map<String, Integer> where the key is the sorted state
+	 * of the corner and the value is the corner in a goal state.
+	 * Used for quicker lookup times while encoding the corners.
+	 */
+	public static HashMap<String, Integer> goalCorners = initGoalCorners();
+
+	/**
 	 * Initializes the state to an empty String.
 	 * Initializes the corners and edges with the positions in our serialized
 	 * representation of a Rubik's cube.
@@ -301,6 +308,19 @@ public class Cube {
 		return sides;
 	}
 
+	private static HashMap<String, Integer> initGoalCorners() {
+		HashMap<String, Integer> result = new HashMap<String, Integer>();
+		result.put("GRW", 0);
+		result.put("BRW", 1);
+		result.put("GRY", 2);
+		result.put("BRY", 3);
+		result.put("GOY", 4);
+		result.put("BOY", 5);
+		result.put("GOW", 6);
+		result.put("BOW", 7);
+		return result;
+	}
+
 	/**
 	 * Method for reading in a file to set up the initial
 	 * state of the Cube.
@@ -459,28 +479,14 @@ public class Cube {
 	 */
 	private Map<Integer, Integer> mapCorners() {
 		Map<Integer, Integer> result = new HashMap<Integer, Integer>();
-		for (int i = 0; i < Cube.CORNERS.length; i++) {
-			String searchingFor = "";
-			for (int s : Cube.CORNERS[i]) {
-				searchingFor += Cube.GOAL.charAt(s);
+		for(int j = 0; j < Cube.CORNERS.length; j++) {
+			String needle = "";
+			for (int s : Cube.CORNERS[j]) {
+				needle += this.state.charAt(s);
 			}
-			// We need to sort this string so we can find it
-			char[] chars = searchingFor.toCharArray();
+			char[] chars = needle.toCharArray();
 			Arrays.sort(chars);
-			searchingFor = new String(chars);
-			// Now we know what colors we're looking for
-			for(int j = 0; j < Cube.CORNERS.length; j++) {
-				String haystack = "";
-				for (int s : Cube.CORNERS[j]) {
-					haystack += this.state.charAt(s);
-				}
-				char[] chars2 = haystack.toCharArray();
-				Arrays.sort(chars2);
-				haystack = new String(chars2);
-				if (haystack.equals(searchingFor)) {
-					result.put(i, j);
-				}
-			}
+			result.put(Cube.goalCorners.get(new String(chars)), j);
 		}
 		for (int i = 0; i < result.size(); i++) {
 			System.out.println( i + " : " + result.get(i));
@@ -529,7 +535,7 @@ public class Cube {
 		System.out.println(cube.toString());
 		System.out.println("Is a valid cube: " + cube.verifyCube());
 		System.out.println(cube.isSolved());
-		cube.rotate("R".charAt(0), 0);
+		cube.rotate("R".charAt(0), 2);
 		cube.encodeCorners();
 		System.out.println(cube.toString());
 	}
