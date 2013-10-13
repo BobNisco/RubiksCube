@@ -428,19 +428,26 @@ public class Cube {
 	 */
 	private String encodeCorners() {
 		Map<Integer, Integer> mappedCorners = mapCorners();
-		String result = "";
+		String[] result = new String[8];
 		for (int i = 0; i < mappedCorners.size(); i++) {
-			if (mappedCorners.get(i) >= i) {
-				result += Integer.toString(mappedCorners.get(i) - i, Math.abs(i - 8));
-			} else {
-				result += Integer.toString(mappedCorners.get(i), Math.abs(i - 8));
+			// Find the shift amount for this current position
+			int diffAmount = 0;
+			int thisCorner = mappedCorners.get(i);
+			for (int j = 0; j < i; j++) {
+				if (mappedCorners.get(j) < thisCorner) {
+					diffAmount++;
+				}
 			}
+			result[i] = Integer.toString(thisCorner - diffAmount, 8 - i);
 		}
-		// Take the last number off since it will always be 0
-		// so we can save space.
-		result = result.substring(0, result.length() - 1);
-		System.out.println(result);
-		return result;
+		String stringResult = "";
+		// Take the last number off to save space since
+		// it will always be 0.
+		for (int i = 0; i < result.length - 1; i++) {
+			stringResult += result[i];
+		}
+		System.out.println(stringResult);
+		return stringResult;
 	}
 
 	/**
@@ -522,7 +529,7 @@ public class Cube {
 		System.out.println(cube.toString());
 		System.out.println("Is a valid cube: " + cube.verifyCube());
 		System.out.println(cube.isSolved());
-		cube.rotate("R".charAt(0), 1);
+		cube.rotate("R".charAt(0), 0);
 		cube.encodeCorners();
 		System.out.println(cube.toString());
 	}
