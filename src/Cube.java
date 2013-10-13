@@ -421,6 +421,11 @@ public class Cube {
 		}
 	}
 
+	/**
+	 * Encodes the corners to a variable-based numbering system.
+	 * @return A string that represents the unique state of the corners
+	 * 		   in a variable-based numbering system.
+	 */
 	private String encodeCorners() {
 		Map<Integer, Integer> mappedCorners = mapCorners();
 		String result = "";
@@ -431,10 +436,20 @@ public class Cube {
 				result += Integer.toString(mappedCorners.get(i), Math.abs(i - 8));
 			}
 		}
+		// Take the last number off since it will always be 0
+		// so we can save space.
+		result = result.substring(0, result.length() - 1);
 		System.out.println(result);
 		return result;
 	}
 
+	/**
+	 * Maps each corner to its current position in the cube.
+	 * @return a Map<Integer, Integer> where the key is the
+	 * corner and the value is the current position.
+	 * Please reference the CORNERS[][] variable to find out
+	 * which corners are which.
+	 */
 	private Map<Integer, Integer> mapCorners() {
 		Map<Integer, Integer> result = new HashMap<Integer, Integer>();
 		for (int i = 0; i < Cube.CORNERS.length; i++) {
@@ -442,6 +457,7 @@ public class Cube {
 			for (int s : Cube.CORNERS[i]) {
 				searchingFor += Cube.GOAL.charAt(s);
 			}
+			// We need to sort this string so we can find it
 			char[] chars = searchingFor.toCharArray();
 			Arrays.sort(chars);
 			searchingFor = new String(chars);
@@ -506,7 +522,7 @@ public class Cube {
 		System.out.println(cube.toString());
 		System.out.println("Is a valid cube: " + cube.verifyCube());
 		System.out.println(cube.isSolved());
-		cube.rotate("R".charAt(0), 2);
+		cube.rotate("R".charAt(0), 1);
 		cube.encodeCorners();
 		System.out.println(cube.toString());
 	}
