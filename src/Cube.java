@@ -53,7 +53,14 @@ public class Cube {
 	 * of the corner and the value is the corner in a goal state.
 	 * Used for quicker lookup times while encoding the corners.
 	 */
-	public static HashMap<String, Integer> goalCorners = initGoalCorners();
+	public static HashMap<String, Integer> GOALCORNERS = initGoalCorners();
+
+	/**
+	 * A HashMap<Character, Integer> where the key is the color of
+	 * the center of each side and the value is the index position of
+	 * that colored center.
+	 */
+	public static HashMap<Character, Integer> CENTERS = initCenters();
 
 	/**
 	 * Initializes the state to an empty String.
@@ -321,6 +328,17 @@ public class Cube {
 		return result;
 	}
 
+	private static HashMap<Character, Integer> initCenters() {
+		HashMap<Character, Integer> centers = new HashMap<Character, Integer>();
+		centers.put("R".charAt(0), 4);
+		centers.put("G".charAt(0), 19);
+		centers.put("Y".charAt(0), 22);
+		centers.put("B".charAt(0), 25);
+		centers.put("O".charAt(0), 40);
+		centers.put("W".charAt(0), 49);
+		return centers;
+	}
+
 	/**
 	 * Method for reading in a file to set up the initial
 	 * state of the Cube.
@@ -358,9 +376,28 @@ public class Cube {
 	 * @return true if state is valid, false if not.
 	 */
 	private boolean verifyCube() {
+		// Check that the length is 54
 		if (this.state.length() != 54) {
 			return false;
 		}
+		// Check that each color is either R O Y G B or W
+		for (int i = 0; i < this.state.length(); i++) {
+			if (!(this.state.charAt(i) == "R".charAt(0) ||
+				this.state.charAt(i) == "O".charAt(0) ||
+				this.state.charAt(i) == "Y".charAt(0) ||
+				this.state.charAt(i) == "G".charAt(0) ||
+				this.state.charAt(i) == "B".charAt(0) ||
+				this.state.charAt(i) == "W".charAt(0))) {
+				return false;
+			}
+		}
+		// Check that the centers are of the proper color
+		for (Map.Entry<Character, Integer> center : Cube.CENTERS.entrySet()) {
+			if (this.state.charAt(center.getValue()) != center.getKey()) {
+				return false;
+			}
+		}
+		// TODO:
 		return true;
 	}
 
@@ -466,7 +503,6 @@ public class Cube {
 		for (int i = 0; i < result.length - 1; i++) {
 			stringResult += result[i];
 		}
-		System.out.println(stringResult);
 		return stringResult;
 	}
 
@@ -486,10 +522,7 @@ public class Cube {
 			}
 			char[] chars = needle.toCharArray();
 			Arrays.sort(chars);
-			result.put(Cube.goalCorners.get(new String(chars)), j);
-		}
-		for (int i = 0; i < result.size(); i++) {
-			System.out.println( i + " : " + result.get(i));
+			result.put(Cube.GOALCORNERS.get(new String(chars)), j);
 		}
 		return result;
 	}
@@ -534,9 +567,11 @@ public class Cube {
 		}
 		System.out.println(cube.toString());
 		System.out.println("Is a valid cube: " + cube.verifyCube());
-		System.out.println(cube.isSolved());
-		cube.rotate("R".charAt(0), 2);
-		cube.encodeCorners();
-		System.out.println(cube.toString());
+		if (cube.verifyCube()) {
+			System.out.println(cube.isSolved());
+			cube.rotate("R".charAt(0), 2);
+			cube.encodeCorners();
+			System.out.println(cube.toString());
+		}
 	}
 }
