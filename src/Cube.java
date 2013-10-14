@@ -11,7 +11,7 @@ import java.util.Map;
  */
 public class Cube {
 
-	public String state;
+	public char[] state;
 
 	/**
 	 * The serialized representation of our goal state.
@@ -68,7 +68,7 @@ public class Cube {
 	 * representation of a Rubik's cube.
 	 */
 	public Cube() {
-		this.state = "";
+		this.state = new char[54];
 	}
 
 	/**
@@ -90,7 +90,6 @@ public class Cube {
 				new int[3],
 				new int[3]
 		};
-		// Oh god this is a monstrosity. What have I done?
 		corners[0][0] = 0;
 		corners[0][1] = 9;
 		corners[0][2] = 51;
@@ -133,7 +132,6 @@ public class Cube {
 				new int[2],
 				new int[2]
 		};
-		// And it keeps getting worse...
 		edges[0][0] = 1;
 		edges[0][1] = 52;
 		edges[1][0] = 3;
@@ -345,7 +343,7 @@ public class Cube {
 	 * @param fileName the path of the file
 	 * @return a string of the file with all newlines and spaces removed.
 	 */
-	public String readTextFile(String fileName) {
+	public char[] readTextFile(String fileName) {
 		String returnValue = "";
 		FileReader file = null;
 		String line = "";
@@ -368,7 +366,7 @@ public class Cube {
 				}
 			}
 		}
-		return returnValue.trim();
+		return returnValue.trim().toCharArray();
 	}
 
 	/**
@@ -377,23 +375,23 @@ public class Cube {
 	 */
 	private boolean verifyCube() {
 		// Check that the length is 54
-		if (this.state.length() != 54) {
+		if (this.state.length != 54) {
 			return false;
 		}
 		// Check that each color is either R O Y G B or W
-		for (int i = 0; i < this.state.length(); i++) {
-			if (!(this.state.charAt(i) == "R".charAt(0) ||
-				this.state.charAt(i) == "O".charAt(0) ||
-				this.state.charAt(i) == "Y".charAt(0) ||
-				this.state.charAt(i) == "G".charAt(0) ||
-				this.state.charAt(i) == "B".charAt(0) ||
-				this.state.charAt(i) == "W".charAt(0))) {
+		for (int i = 0; i < this.state.length; i++) {
+			if (!(this.state[i] == "R".charAt(0) ||
+				this.state[i] == "O".charAt(0) ||
+				this.state[i] == "Y".charAt(0) ||
+				this.state[i] == "G".charAt(0) ||
+				this.state[i] == "B".charAt(0) ||
+				this.state[i] == "W".charAt(0))) {
 				return false;
 			}
 		}
 		// Check that the centers are of the proper color
 		for (Map.Entry<Character, Integer> center : Cube.CENTERS.entrySet()) {
-			if (this.state.charAt(center.getValue()) != center.getKey()) {
+			if (this.state[center.getValue()] != center.getKey()) {
 				return false;
 			}
 		}
@@ -432,9 +430,9 @@ public class Cube {
 		}
 
 		// Make a copy of the state array so we can reference it
-		final char[] stateArray = this.state.toCharArray();
+		final char[] stateArray = this.state.clone();
 		// An array representing the chars of the state after rotations
-		char[] newStateArray = this.state.toCharArray();
+		char[] newStateArray = this.state.clone();
 
 		// Rotate the face
 		this.rotateFace(thisFace, turns, newStateArray, stateArray);
@@ -442,7 +440,7 @@ public class Cube {
 		this.rotateSide(theSides, turns, newStateArray, stateArray);
 
 		// Set the state to the newly rotated cube
-		this.state = new String(newStateArray);
+		this.state = newStateArray;
 		// Return true because it was successful!
 		return true;
 	}
@@ -495,15 +493,15 @@ public class Cube {
 					diffAmount++;
 				}
 			}
-			result[i] = Integer.toString(thisCorner - diffAmount, 8 - i);
+			result[i] = Integer.toString(thisCorner - diffAmount);
 		}
-		String stringResult = "";
 		// Take the last number off to save space since
 		// it will always be 0.
+		StringBuilder builder = new StringBuilder();
 		for (int i = 0; i < result.length - 1; i++) {
-			stringResult += result[i];
+			builder.append(result[i]);
 		}
-		return stringResult;
+		return builder.toString();
 	}
 
 	/**
@@ -518,7 +516,7 @@ public class Cube {
 		for(int j = 0; j < Cube.CORNERS.length; j++) {
 			String needle = "";
 			for (int s : Cube.CORNERS[j]) {
-				needle += this.state.charAt(s);
+				needle += this.state[s];
 			}
 			char[] chars = needle.toCharArray();
 			Arrays.sort(chars);
@@ -535,22 +533,20 @@ public class Cube {
 	public String toString() {
 		String result = "";
 
-		char[] stateArray = this.state.toCharArray();
-
-		for (int i = 0; i < stateArray.length; i++) {
+		for (int i = 0; i < this.state.length; i++) {
 			if (i < 9 || i > 35) {
 				if (i % 3 == 0) {
-					result += "   " + stateArray[i];
+					result += "   " + this.state[i];
 				} else if (i % 3 == 2) {
-					result += stateArray[i] + "\n";
+					result += this.state[i] + "\n";
 				} else {
-					result += stateArray[i];
+					result += this.state[i];
 				}
 			} else {
 				if (i % 9 == 8) {
-					result += stateArray[i] + "\n";
+					result += this.state[i] + "\n";
 				} else {
-					result += stateArray[i];
+					result += this.state[i];
 				}
 			}
 		}
