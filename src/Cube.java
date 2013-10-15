@@ -453,15 +453,13 @@ public class Cube {
 			return false;
 		}
 
-		// Make a copy of the state array so we can reference it
-		final char[] stateArray = this.state.clone();
 		// An array representing the chars of the state after rotations
 		char[] newStateArray = this.state.clone();
 
 		// Rotate the face
-		this.rotateFace(thisFace, turns, newStateArray, stateArray);
+		this.rotateFace(thisFace, turns, newStateArray);
 		// Rotate the sides
-		this.rotateSide(theSides, turns, newStateArray, stateArray);
+		this.rotateSide(theSides, turns, newStateArray);
 
 		// Set the state to the newly rotated cube
 		this.state = newStateArray;
@@ -476,11 +474,10 @@ public class Cube {
 	 * @param turns the amount of times we will be rotating the cube
 	 * @param newStateArray the array that will represent the state of
 	 *                      the cube after all rotations
-	 * @param stateArray a reference to the state of the cube before turning
 	 */
-	private void rotateFace(int[] thisFace, int turns, char[] newStateArray, char[] stateArray) {
+	private void rotateFace(int[] thisFace, int turns, char[] newStateArray) {
 		for (int i = 0; i < thisFace.length; i++) {
-			newStateArray[thisFace[(i + (2 * turns)) % 8]] = stateArray[thisFace[i]];
+			newStateArray[thisFace[(i + (2 * turns)) % 8]] = this.state[thisFace[i]];
 		}
 	}
 
@@ -491,12 +488,11 @@ public class Cube {
 	 * @param turns the amount of times we will be rotating the cube
 	 * @param newStateArray the array that will represent the state of
 	 *                      the cube after all rotations
-	 * @param stateArray a reference to the state of the cube before turning
 	 */
-	private void rotateSide(int[] theSides, int turns, char[] newStateArray, char[] stateArray) {
+	private void rotateSide(int[] theSides, int turns, char[] newStateArray) {
 		for (int i = 0; i < theSides.length; i++) {
 			int moveInt = theSides[(i + (3 * turns)) % theSides.length];
-			newStateArray[moveInt] = stateArray[theSides[i]];
+			newStateArray[moveInt] = this.state[theSides[i]];
 		}
 	}
 
@@ -633,6 +629,7 @@ public class Cube {
 		System.out.println(cube.toString());
 		System.out.println("Is a valid cube: " + cube.verifyCube());
 		if (cube.verifyCube()) {
+			cube.rotate("R".charAt(0), 2);
 			System.out.println("Is solved: " + cube.isSolved());
 			cube.encodeCorners();
 			cube.encodeEdges();
