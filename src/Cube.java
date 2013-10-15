@@ -611,6 +611,29 @@ public class Cube {
 		return result;
 	}
 
+    public void rotateAllFaces () {
+        //Rotates the R face three times and stores the state after each individual rotation
+        //Then rotates G face three times and stores the state after each individual rotation
+        //And so on...
+        String faceColors[] = {"R", "G", "B", "O", "Y", "W"};
+        for (int q = 0; q < faceColors.length; q++) {
+
+            for (int i = 0; i < 3; i++) {
+                this.rotate(faceColors[q].charAt(0), 1);
+                String x = this.toString();
+                Map state = this.cornersTable(i, x);
+				System.out.println(this.encodeCorners());
+                System.out.println(state.get(i));
+            }
+        }
+    }
+
+    public void allCornerPosOriByRotatingFaces() {
+
+
+
+    }
+
 	/**
 	 * Super nice way to print out the cube in a 2D fashion
 	 * @return a string of the 2D representation of the cube
@@ -652,22 +675,7 @@ public class Cube {
 		if (cube.verifyCube()) {
 			System.out.println(cube.isSolved());
 			//cube.rotate("R".charAt(0), 1);
-
-            //Rotates the R face three times and stores the state after each individual rotation
-            //Then rotates G face three times and stores the state after each individual rotation
-            //And so on...
-            String faceColors[] = {"R", "G", "B", "O", "Y", "W"};
-            for (int q = 0; q < faceColors.length; q++) {
-
-                for (int i = 0; i < 3; i++) {
-                    cube.rotate(faceColors[q].charAt(0), 1);
-                    String x = cube.toString();
-                    Map state = cube.cornersTable(i, x);
-					System.out.println(cube.encodeCorners());
-
-                    System.out.println(state.get(i));
-                }
-            }
+            cube.rotateAllFaces();
 		}
 	}
 }
