@@ -650,7 +650,6 @@ public class Cube {
 		System.out.println(cube.toString());
 		System.out.println("Is a valid cube: " + cube.verifyCube());
 		if (cube.verifyCube()) {
-<<<<<<< HEAD
 			System.out.println(cube.isSolved());
 			//cube.rotate("R".charAt(0), 1);
 
@@ -668,17 +667,6 @@ public class Cube {
                     System.out.println(state.get(i));
                 }
             }
-
-
-			//cube.encodeCorners();
-			//System.out.println(cube.toString());
-=======
-			cube.rotate("R".charAt(0), 2);
-			System.out.println("Is solved: " + cube.isSolved());
-			cube.encodeCorners();
-			cube.encodeEdges();
-			System.out.println(cube.toString());
->>>>>>> 65ff1df5b854c2fc0eb3f710c7d659b5b21426cc
 		}
 	}
 }
