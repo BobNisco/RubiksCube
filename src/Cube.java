@@ -428,7 +428,7 @@ public class Cube {
 	 * @return true if the state equals the goal, false otherwise
 	 */
 	public boolean isSolved() {
-		if (this.state.equals(Cube.GOAL)) {
+		if (new String(this.state).equals(Cube.GOAL)) {
 			return true;
 		}
 		return false;
@@ -501,19 +501,26 @@ public class Cube {
 	}
 
 	/**
-	 * Encodes the corners to a variable-based numbering system.
-	 * @return A string that represents the unique state of the corners
-	 * 		   in a variable-based numbering system.
+	 * Internal handler for encoding of corners or edges.
+	 * Does all of the variable-based encoding for either the corners
+	 * or edges. This function shouldn't necessarily be called directly,
+	 * but rather be called from the encodeCorners or encodeEdges functions.
+	 * @param mappedSides a Map<Integer, Integer> of the mapped edges/corners
+	 *                    we want to encode.
+	 * @param resultLength the expected result length. This function will
+	 *                     return a string that is resultLength - 1 to save
+	 *                     space since the last number in the string will
+	 *                     always be 0.
+	 * @return
 	 */
-	private String encodeCorners() {
-		Map<Integer, Integer> mappedCorners = mapCorners();
-		String[] result = new String[8];
-		for (int i = 0; i < mappedCorners.size(); i++) {
+	private String encode(Map<Integer, Integer> mappedSides, int resultLength) {
+		String[] result = new String[resultLength];
+		for (int i = 0; i < mappedSides.size(); i++) {
 			// Find the shift amount for this current position
 			int diffAmount = 0;
-			int thisCorner = mappedCorners.get(i);
+			int thisCorner = mappedSides.get(i);
 			for (int j = 0; j < i; j++) {
-				if (mappedCorners.get(j) < thisCorner) {
+				if (mappedSides.get(j) < thisCorner) {
 					diffAmount++;
 				}
 			}
@@ -526,6 +533,15 @@ public class Cube {
 			builder.append(result[i]);
 		}
 		return builder.toString();
+	}
+
+	/**
+	 * Calls the internal encode() function for the corners.
+	 * @return A string that represents the unique state of the corners
+	 * 		   in a variable-based numbering system.
+	 */
+	private String encodeCorners() {
+		return encode(mapCorners(), 8);
 	}
 
 	/**
@@ -547,6 +563,15 @@ public class Cube {
 			result.put(Cube.GOALCORNERS.get(new String(chars)), j);
 		}
 		return result;
+	}
+
+	/**
+	 * Calls the internal encode() function for the edges.
+	 * @return A string that represents the unique state of the edges
+	 * 		   in a variable-based numbering system.
+	 */
+	private String encodeEdges() {
+		return encode(mapEdges(), 12);
 	}
 
 	/**
@@ -608,10 +633,9 @@ public class Cube {
 		System.out.println(cube.toString());
 		System.out.println("Is a valid cube: " + cube.verifyCube());
 		if (cube.verifyCube()) {
-			System.out.println(cube.isSolved());
-			cube.rotate("R".charAt(0), 2);
+			System.out.println("Is solved: " + cube.isSolved());
 			cube.encodeCorners();
-			cube.mapEdges();
+			cube.encodeEdges();
 			System.out.println(cube.toString());
 		}
 	}
