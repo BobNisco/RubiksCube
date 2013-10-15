@@ -63,6 +63,13 @@ public class Cube {
 	public static HashMap<Character, Integer> CENTERS = initCenters();
 
 	/**
+	 * A HashMap<String, Integer> where the key is the sorted state
+	 * of the edges and the value is the edge in a goal state.
+	 * Used for quicker lookup times while encoding the edges.
+	 */
+	public static HashMap<String, Integer> GOALEDGES = initGoalEdges();
+
+	/**
 	 * Initializes the state to an empty String.
 	 * Initializes the corners and edges with the positions in our serialized
 	 * representation of a Rubik's cube.
@@ -337,6 +344,23 @@ public class Cube {
 		return centers;
 	}
 
+	private static HashMap<String, Integer> initGoalEdges() {
+		HashMap<String, Integer> result = new HashMap<String, Integer>();
+		result.put("RW", 0);
+		result.put("GR", 1);
+		result.put("BR", 2);
+		result.put("RY", 3);
+		result.put("GW", 4);
+		result.put("GY", 5);
+		result.put("BY", 6);
+		result.put("BW", 7);
+		result.put("GO", 8);
+		result.put("OY", 9);
+		result.put("BO", 10);
+		result.put("OW", 11);
+		return result;
+	}
+
 	/**
 	 * Method for reading in a file to set up the initial
 	 * state of the Cube.
@@ -526,6 +550,26 @@ public class Cube {
 	}
 
 	/**
+	 * Maps each edge to its current position in the cube.
+	 * @return a Map<Integer, Integer> where the key is the
+	 * corner and the value is the current position.
+	 * Please reference the EDGES[][] variable to find out
+	 * which edges are which.
+	 */
+	private Map<Integer, Integer> mapEdges() {
+		Map<Integer, Integer> result = new HashMap<Integer, Integer>();
+		for (int i = 0; i < Cube.EDGES.length; i++) {
+			char[] needle = new char[Cube.EDGES[i].length];
+			for (int j = 0; j < Cube.EDGES[i].length; j++) {
+				needle[j] = this.state[Cube.EDGES[i][j]];
+			}
+			Arrays.sort(needle);
+			result.put(Cube.GOALEDGES.get(new String(needle)), i);
+		}
+		return result;
+	}
+
+	/**
 	 * Super nice way to print out the cube in a 2D fashion
 	 * @return a string of the 2D representation of the cube
 	 */
@@ -567,6 +611,7 @@ public class Cube {
 			System.out.println(cube.isSolved());
 			cube.rotate("R".charAt(0), 2);
 			cube.encodeCorners();
+			cube.mapEdges();
 			System.out.println(cube.toString());
 		}
 	}
