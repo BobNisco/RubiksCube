@@ -274,7 +274,7 @@ public class Cube {
 		side[8] = 36;
 		side[9] = 29;
 		side[10] = 20;
-		side[11] = 1;
+		side[11] = 11;
 		sides.put("Y".charAt(0), side);
 		side = new int[12];
 		side[0] = 8;
@@ -663,6 +663,7 @@ public class Cube {
                     cube.rotate(faceColors[q].charAt(0), 1);
                     String x = cube.toString();
                     Map state = cube.cornersTable(i, x);
+					System.out.println(cube.encodeCorners());
 
                     System.out.println(state.get(i));
                 }
