@@ -17,7 +17,7 @@ public class Cube {
 	/**
 	 * The serialized representation of our goal state.
 	 */
-	public static String GOAL = "RRRRRRRRRGGGYYYBBBGGGYYYBBBGGGYYYBBBOOOOOOOOOWWWWWWWWW";
+	public final static String GOAL = "RRRRRRRRRGGGYYYBBBGGGYYYBBBGGGYYYBBBOOOOOOOOOWWWWWWWWW";
 
 	/**
 	 * A two-dimensional primitive array of ints representing the location of the corners.
@@ -25,7 +25,7 @@ public class Cube {
 	 * Each row represents a physical corner cubie on the Rubik's cube.
 	 * Each column in the row represents a location in the serialized version of the cube.
 	 */
-	public static int[][] CORNERS = initCorners();
+	public final static int[][] CORNERS = initCorners();
 
 	/**
 	 * A two-dimensional primitive array of ints representing the location of the edges.
@@ -33,35 +33,42 @@ public class Cube {
 	 * Each row represents a physical edge cubie on the Rubik's cube.
 	 * Each column in the row represents a location in the serialize version of the cube.
 	 */
-	public static int[][] EDGES = initEdges();
+	public final static int[][] EDGES = initEdges();
 
 	/**
-	 * A Map<Character, int[]> where the key is the character of the
+	 * A HashMap<Character, int[]> where the key is the character of the
 	 * color of the face and the int[] is the indices of the string in
 	 * which the face represents.
 	 */
-	public static Map<Character, int[]> FACES = initFaces();
+	public final static HashMap<Character, int[]> FACES = initFaces();
 
 	/**
-	 * A Map<Character, int[]>, where the key is the character of the
+	 * A HashMap<Character, int[]>, where the key is the character of the
 	 * color of the face and the int[] is the indices of the string in
 	 * which the side represents.
 	 */
-	public static Map<Character, int[]> SIDES = initSides();
+	public final static HashMap<Character, int[]> SIDES = initSides();
 
 	/**
 	 * A Map<String, Integer> where the key is the sorted state
 	 * of the corner and the value is the corner in a goal state.
 	 * Used for quicker lookup times while encoding the corners.
 	 */
-	public static HashMap<String, Integer> GOALCORNERS = initGoalCorners();
+	public final static HashMap<String, Integer> GOALCORNERS = initGoalCorners();
 
 	/**
 	 * A HashMap<Character, Integer> where the key is the color of
 	 * the center of each side and the value is the index position of
 	 * that colored center.
 	 */
-	public static HashMap<Character, Integer> CENTERS = initCenters();
+	public final static HashMap<Character, Integer> CENTERS = initCenters();
+
+	/**
+	 * A HashMap<String, Integer> where the key is the sorted state
+	 * of the edges and the value is the edge in a goal state.
+	 * Used for quicker lookup times while encoding the edges.
+	 */
+	public final static HashMap<String, Integer> GOALEDGES = initGoalEdges();
 
 	/**
 	 * Initializes the state to an empty String.
@@ -160,8 +167,8 @@ public class Cube {
 		return edges;
 	}
 
-	private static Map<Character, int[]> initFaces() {
-		Map<Character, int[]> faces = new HashMap<Character, int[]>();
+	private static HashMap<Character, int[]> initFaces() {
+		HashMap<Character, int[]> faces = new HashMap<Character, int[]>();
 		int[] face = new int[8];
 		face[0] = 0;
 		face[1] = 1;
@@ -225,8 +232,8 @@ public class Cube {
 		return faces;
 	}
 
-	private static Map<Character, int[]> initSides() {
-		Map<Character, int[]> sides = new HashMap<Character, int[]>();
+	private static HashMap<Character, int[]> initSides() {
+		HashMap<Character, int[]> sides = new HashMap<Character, int[]>();
 		int[] side = new int[12];
 		side[0] = 51;
 		side[1] = 52;
@@ -338,6 +345,23 @@ public class Cube {
 		return centers;
 	}
 
+	private static HashMap<String, Integer> initGoalEdges() {
+		HashMap<String, Integer> result = new HashMap<String, Integer>();
+		result.put("RW", 0);
+		result.put("GR", 1);
+		result.put("BR", 2);
+		result.put("RY", 3);
+		result.put("GW", 4);
+		result.put("GY", 5);
+		result.put("BY", 6);
+		result.put("BW", 7);
+		result.put("GO", 8);
+		result.put("OY", 9);
+		result.put("BO", 10);
+		result.put("OW", 11);
+		return result;
+	}
+
 	/**
 	 * Method for reading in a file to set up the initial
 	 * state of the Cube.
@@ -347,7 +371,7 @@ public class Cube {
 	public char[] readTextFile(String fileName) {
 		String returnValue = "";
 		FileReader file = null;
-		String line = "";
+		String line;
 		try {
 			file = new FileReader(fileName);
 			BufferedReader reader = new BufferedReader(file);
@@ -405,7 +429,7 @@ public class Cube {
 	 * @return true if the state equals the goal, false otherwise
 	 */
 	public boolean isSolved() {
-		if (this.state.equals(Cube.GOAL)) {
+		if (new String(this.state).equals(Cube.GOAL)) {
 			return true;
 		}
 		return false;
@@ -430,15 +454,13 @@ public class Cube {
 			return false;
 		}
 
-		// Make a copy of the state array so we can reference it
-		final char[] stateArray = this.state.clone();
 		// An array representing the chars of the state after rotations
 		char[] newStateArray = this.state.clone();
 
 		// Rotate the face
-		this.rotateFace(thisFace, turns, newStateArray, stateArray);
+		this.rotateFace(thisFace, turns, newStateArray);
 		// Rotate the sides
-		this.rotateSide(theSides, turns, newStateArray, stateArray);
+		this.rotateSide(theSides, turns, newStateArray);
 
 		// Set the state to the newly rotated cube
 		this.state = newStateArray;
@@ -453,11 +475,10 @@ public class Cube {
 	 * @param turns the amount of times we will be rotating the cube
 	 * @param newStateArray the array that will represent the state of
 	 *                      the cube after all rotations
-	 * @param stateArray a reference to the state of the cube before turning
 	 */
-	private void rotateFace(int[] thisFace, int turns, char[] newStateArray, char[] stateArray) {
+	private void rotateFace(int[] thisFace, int turns, char[] newStateArray) {
 		for (int i = 0; i < thisFace.length; i++) {
-			newStateArray[thisFace[(i + (2 * turns)) % 8]] = stateArray[thisFace[i]];
+			newStateArray[thisFace[(i + (2 * turns)) % 8]] = this.state[thisFace[i]];
 		}
 	}
 
@@ -468,29 +489,36 @@ public class Cube {
 	 * @param turns the amount of times we will be rotating the cube
 	 * @param newStateArray the array that will represent the state of
 	 *                      the cube after all rotations
-	 * @param stateArray a reference to the state of the cube before turning
 	 */
-	private void rotateSide(int[] theSides, int turns, char[] newStateArray, char[] stateArray) {
+	private void rotateSide(int[] theSides, int turns, char[] newStateArray) {
 		for (int i = 0; i < theSides.length; i++) {
 			int moveInt = theSides[(i + (3 * turns)) % theSides.length];
-			newStateArray[moveInt] = stateArray[theSides[i]];
+			newStateArray[moveInt] = this.state[theSides[i]];
 		}
 	}
 
 	/**
-	 * Encodes the corners to a variable-based numbering system.
-	 * @return A string that represents the unique state of the corners
-	 * 		   in a variable-based numbering system.
+	 * Internal handler for encoding of corners or edges.
+	 * Does all of the variable-based encoding for either the corners
+	 * or edges. This function shouldn't necessarily be called directly,
+	 * but rather be called from the encodeCorners or encodeEdges functions.
+	 * @param mappedSides a HashMap<Integer, Integer> of the mapped edges/corners
+	 *                    we want to encode.
+	 * @param resultLength the expected result length. This function will
+	 *                     return a string that is resultLength - 1 to save
+	 *                     space since the last number in the string will
+	 *                     always be 0.
+	 * @return a String that represents the variable-based number representation
+	 *         of the given corner or edge.
 	 */
-	private String encodeCorners() {
-		Map<Integer, Integer> mappedCorners = mapCorners();
-		String[] result = new String[8];
-		for (int i = 0; i < mappedCorners.size(); i++) {
+	private String encode(HashMap<Integer, Integer> mappedSides, int resultLength) {
+		String[] result = new String[resultLength];
+		for (int i = 0; i < mappedSides.size(); i++) {
 			// Find the shift amount for this current position
 			int diffAmount = 0;
-			int thisCorner = mappedCorners.get(i);
+			int thisCorner = mappedSides.get(i);
 			for (int j = 0; j < i; j++) {
-				if (mappedCorners.get(j) < thisCorner) {
+				if (mappedSides.get(j) < thisCorner) {
 					diffAmount++;
 				}
 			}
@@ -506,14 +534,23 @@ public class Cube {
 	}
 
 	/**
+	 * Calls the internal encode() function for the corners.
+	 * @return A string that represents the unique state of the corners
+	 * 		   in a variable-based numbering system.
+	 */
+	private String encodeCorners() {
+		return encode(mapCorners(), 8);
+	}
+
+	/**
 	 * Maps each corner to its current position in the cube.
-	 * @return a Map<Integer, Integer> where the key is the
+	 * @return a HashMap<Integer, Integer> where the key is the
 	 * corner and the value is the current position.
 	 * Please reference the CORNERS[][] variable to find out
 	 * which corners are which.
 	 */
-	private Map<Integer, Integer> mapCorners() {
-		Map<Integer, Integer> result = new HashMap<Integer, Integer>();
+	private HashMap<Integer, Integer> mapCorners() {
+		HashMap<Integer, Integer> result = new HashMap<Integer, Integer>();
 		for(int j = 0; j < Cube.CORNERS.length; j++) {
 			String needle = "";
 			for (int s : Cube.CORNERS[j]) {
@@ -546,6 +583,35 @@ public class Cube {
     //***************
 
 	/**
+	 * Calls the internal encode() function for the edges.
+	 * @return A string that represents the unique state of the edges
+	 * 		   in a variable-based numbering system.
+	 */
+	private String encodeEdges() {
+		return encode(mapEdges(), 12);
+	}
+
+	/**
+	 * Maps each edge to its current position in the cube.
+	 * @return a HashMap<Integer, Integer> where the key is the
+	 * corner and the value is the current position.
+	 * Please reference the EDGES[][] variable to find out
+	 * which edges are which.
+	 */
+	private HashMap<Integer, Integer> mapEdges() {
+		HashMap<Integer, Integer> result = new HashMap<Integer, Integer>();
+		for (int i = 0; i < Cube.EDGES.length; i++) {
+			char[] needle = new char[Cube.EDGES[i].length];
+			for (int j = 0; j < Cube.EDGES[i].length; j++) {
+				needle[j] = this.state[Cube.EDGES[i][j]];
+			}
+			Arrays.sort(needle);
+			result.put(Cube.GOALEDGES.get(new String(needle)), i);
+		}
+		return result;
+	}
+
+	/**
 	 * Super nice way to print out the cube in a 2D fashion
 	 * @return a string of the 2D representation of the cube
 	 */
@@ -575,7 +641,7 @@ public class Cube {
 	}
 
 	public static void main(String[] args) {
-		Cube cube = null;
+		Cube cube;
 		if (args.length <= 0) {
 			cube = new Cube("input1.txt");
 		} else {
@@ -584,6 +650,7 @@ public class Cube {
 		System.out.println(cube.toString());
 		System.out.println("Is a valid cube: " + cube.verifyCube());
 		if (cube.verifyCube()) {
+<<<<<<< HEAD
 			System.out.println(cube.isSolved());
 			//cube.rotate("R".charAt(0), 1);
 
@@ -605,6 +672,13 @@ public class Cube {
 
 			//cube.encodeCorners();
 			//System.out.println(cube.toString());
+=======
+			cube.rotate("R".charAt(0), 2);
+			System.out.println("Is solved: " + cube.isSolved());
+			cube.encodeCorners();
+			cube.encodeEdges();
+			System.out.println(cube.toString());
+>>>>>>> 65ff1df5b854c2fc0eb3f710c7d659b5b21426cc
 		}
 	}
 }
