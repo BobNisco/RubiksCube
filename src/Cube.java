@@ -16,7 +16,7 @@ public class Cube {
 	/**
 	 * The serialized representation of our goal state.
 	 */
-	public static String GOAL = "RRRRRRRRRGGGYYYBBBGGGYYYBBBGGGYYYBBBOOOOOOOOOWWWWWWWWW";
+	public final static String GOAL = "RRRRRRRRRGGGYYYBBBGGGYYYBBBGGGYYYBBBOOOOOOOOOWWWWWWWWW";
 
 	/**
 	 * A two-dimensional primitive array of ints representing the location of the corners.
@@ -24,7 +24,7 @@ public class Cube {
 	 * Each row represents a physical corner cubie on the Rubik's cube.
 	 * Each column in the row represents a location in the serialized version of the cube.
 	 */
-	public static int[][] CORNERS = initCorners();
+	public final static int[][] CORNERS = initCorners();
 
 	/**
 	 * A two-dimensional primitive array of ints representing the location of the edges.
@@ -32,42 +32,42 @@ public class Cube {
 	 * Each row represents a physical edge cubie on the Rubik's cube.
 	 * Each column in the row represents a location in the serialize version of the cube.
 	 */
-	public static int[][] EDGES = initEdges();
+	public final static int[][] EDGES = initEdges();
 
 	/**
-	 * A Map<Character, int[]> where the key is the character of the
+	 * A HashMap<Character, int[]> where the key is the character of the
 	 * color of the face and the int[] is the indices of the string in
 	 * which the face represents.
 	 */
-	public static Map<Character, int[]> FACES = initFaces();
+	public final static HashMap<Character, int[]> FACES = initFaces();
 
 	/**
-	 * A Map<Character, int[]>, where the key is the character of the
+	 * A HashMap<Character, int[]>, where the key is the character of the
 	 * color of the face and the int[] is the indices of the string in
 	 * which the side represents.
 	 */
-	public static Map<Character, int[]> SIDES = initSides();
+	public final static HashMap<Character, int[]> SIDES = initSides();
 
 	/**
 	 * A Map<String, Integer> where the key is the sorted state
 	 * of the corner and the value is the corner in a goal state.
 	 * Used for quicker lookup times while encoding the corners.
 	 */
-	public static HashMap<String, Integer> GOALCORNERS = initGoalCorners();
+	public final static HashMap<String, Integer> GOALCORNERS = initGoalCorners();
 
 	/**
 	 * A HashMap<Character, Integer> where the key is the color of
 	 * the center of each side and the value is the index position of
 	 * that colored center.
 	 */
-	public static HashMap<Character, Integer> CENTERS = initCenters();
+	public final static HashMap<Character, Integer> CENTERS = initCenters();
 
 	/**
 	 * A HashMap<String, Integer> where the key is the sorted state
 	 * of the edges and the value is the edge in a goal state.
 	 * Used for quicker lookup times while encoding the edges.
 	 */
-	public static HashMap<String, Integer> GOALEDGES = initGoalEdges();
+	public final static HashMap<String, Integer> GOALEDGES = initGoalEdges();
 
 	/**
 	 * Initializes the state to an empty String.
@@ -166,8 +166,8 @@ public class Cube {
 		return edges;
 	}
 
-	private static Map<Character, int[]> initFaces() {
-		Map<Character, int[]> faces = new HashMap<Character, int[]>();
+	private static HashMap<Character, int[]> initFaces() {
+		HashMap<Character, int[]> faces = new HashMap<Character, int[]>();
 		int[] face = new int[8];
 		face[0] = 0;
 		face[1] = 1;
@@ -231,8 +231,8 @@ public class Cube {
 		return faces;
 	}
 
-	private static Map<Character, int[]> initSides() {
-		Map<Character, int[]> sides = new HashMap<Character, int[]>();
+	private static HashMap<Character, int[]> initSides() {
+		HashMap<Character, int[]> sides = new HashMap<Character, int[]>();
 		int[] side = new int[12];
 		side[0] = 51;
 		side[1] = 52;
@@ -370,7 +370,7 @@ public class Cube {
 	public char[] readTextFile(String fileName) {
 		String returnValue = "";
 		FileReader file = null;
-		String line = "";
+		String line;
 		try {
 			file = new FileReader(fileName);
 			BufferedReader reader = new BufferedReader(file);
@@ -501,15 +501,16 @@ public class Cube {
 	 * Does all of the variable-based encoding for either the corners
 	 * or edges. This function shouldn't necessarily be called directly,
 	 * but rather be called from the encodeCorners or encodeEdges functions.
-	 * @param mappedSides a Map<Integer, Integer> of the mapped edges/corners
+	 * @param mappedSides a HashMap<Integer, Integer> of the mapped edges/corners
 	 *                    we want to encode.
 	 * @param resultLength the expected result length. This function will
 	 *                     return a string that is resultLength - 1 to save
 	 *                     space since the last number in the string will
 	 *                     always be 0.
-	 * @return
+	 * @return a String that represents the variable-based number representation
+	 *         of the given corner or edge.
 	 */
-	private String encode(Map<Integer, Integer> mappedSides, int resultLength) {
+	private String encode(HashMap<Integer, Integer> mappedSides, int resultLength) {
 		String[] result = new String[resultLength];
 		for (int i = 0; i < mappedSides.size(); i++) {
 			// Find the shift amount for this current position
@@ -542,13 +543,13 @@ public class Cube {
 
 	/**
 	 * Maps each corner to its current position in the cube.
-	 * @return a Map<Integer, Integer> where the key is the
+	 * @return a HashMap<Integer, Integer> where the key is the
 	 * corner and the value is the current position.
 	 * Please reference the CORNERS[][] variable to find out
 	 * which corners are which.
 	 */
-	private Map<Integer, Integer> mapCorners() {
-		Map<Integer, Integer> result = new HashMap<Integer, Integer>();
+	private HashMap<Integer, Integer> mapCorners() {
+		HashMap<Integer, Integer> result = new HashMap<Integer, Integer>();
 		for(int j = 0; j < Cube.CORNERS.length; j++) {
 			String needle = "";
 			for (int s : Cube.CORNERS[j]) {
@@ -572,13 +573,13 @@ public class Cube {
 
 	/**
 	 * Maps each edge to its current position in the cube.
-	 * @return a Map<Integer, Integer> where the key is the
+	 * @return a HashMap<Integer, Integer> where the key is the
 	 * corner and the value is the current position.
 	 * Please reference the EDGES[][] variable to find out
 	 * which edges are which.
 	 */
-	private Map<Integer, Integer> mapEdges() {
-		Map<Integer, Integer> result = new HashMap<Integer, Integer>();
+	private HashMap<Integer, Integer> mapEdges() {
+		HashMap<Integer, Integer> result = new HashMap<Integer, Integer>();
 		for (int i = 0; i < Cube.EDGES.length; i++) {
 			char[] needle = new char[Cube.EDGES[i].length];
 			for (int j = 0; j < Cube.EDGES[i].length; j++) {
@@ -620,7 +621,7 @@ public class Cube {
 	}
 
 	public static void main(String[] args) {
-		Cube cube = null;
+		Cube cube;
 		if (args.length <= 0) {
 			cube = new Cube("input1.txt");
 		} else {
