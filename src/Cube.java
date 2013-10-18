@@ -567,16 +567,16 @@ public class Cube {
 
     /**
      *
-     * @param i  the key that will identify the stored cube state
+     * @param encodeCorner  the key that will identify the stored cube state
      * @param cube the value (cube state) after a rotation
      * @return a Map<Integer, String> where the key is a integer and the value is
      * a cube state after a rotation.
      */
-    private Map<Integer, String> cornersTable(int i, String cube) {
-        Map<Integer, String> cornerTable;
-        cornerTable = new HashMap<Integer, String>();
+    private Map<String, String> cornersTable(String encodeCorner, String cube) {
+        Map<String, String> cornerTable;
+        cornerTable = new HashMap<String, String>();
 
-        cornerTable.put(i, cube);
+        cornerTable.put(encodeCorner, cube);
 
         return cornerTable;
     }
@@ -621,16 +621,12 @@ public class Cube {
             for (int i = 0; i < 3; i++) {
                 this.rotate(faceColors[q].charAt(0), 1);
                 String x = this.toString();
-                Map state = this.cornersTable(i, x);
+                String encodeCorners = this.encodeCorners();
+                Map state = this.cornersTable(encodeCorners, x);
 				System.out.println(this.encodeCorners());
-                System.out.println(state.get(i));
+                System.out.println(state.get(encodeCorners));
             }
         }
-    }
-
-    public void allCornerPosOriByRotatingFaces() {
-
-
 
     }
 
@@ -676,6 +672,8 @@ public class Cube {
 			System.out.println(cube.isSolved());
 			//cube.rotate("R".charAt(0), 1);
             cube.rotateAllFaces();
+
 		}
+
 	}
 }
