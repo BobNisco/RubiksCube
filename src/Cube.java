@@ -441,31 +441,31 @@ public class Cube {
 	 * @param turns the number of clockwise turns.
 	 * @return true if rotate was successful, else false if there was an error.
 	 */
-	public boolean rotate(Character face, int turns) {
+	public static char[] rotate(char[] state, Character face, int turns) {
 		// Turning it by any number of turns mod 4 would be wasting CPU cycles
 		if (turns % 4 == 0) {
-			return true;
+			return state;
 		}
 		int[] thisFace = FACES.get(face);
 		int[] theSides = Cube.SIDES.get(face);
 		// Error checking to verify that the given character is valid
 		// and in the map and that we got both theFace and theSide
 		if (thisFace == null || theSides == null) {
-			return false;
+			return state;
 		}
 
 		// An array representing the chars of the state after rotations
-		char[] newStateArray = this.state.clone();
+		char[] newStateArray = state.clone();
 
 		// Rotate the face
-		this.rotateFace(thisFace, turns, newStateArray);
+		rotateFace(state, thisFace, turns, newStateArray);
 		// Rotate the sides
-		this.rotateSide(theSides, turns, newStateArray);
+		rotateSide(state, theSides, turns, newStateArray);
 
 		// Set the state to the newly rotated cube
-		this.state = newStateArray;
+		state = newStateArray;
 		// Return true because it was successful!
-		return true;
+		return state;
 	}
 
 	/**
@@ -476,9 +476,9 @@ public class Cube {
 	 * @param newStateArray the array that will represent the state of
 	 *                      the cube after all rotations
 	 */
-	private void rotateFace(int[] thisFace, int turns, char[] newStateArray) {
+	private static void rotateFace(char[] state, int[] thisFace, int turns, char[] newStateArray) {
 		for (int i = 0; i < thisFace.length; i++) {
-			newStateArray[thisFace[(i + (2 * turns)) % 8]] = this.state[thisFace[i]];
+			newStateArray[thisFace[(i + (2 * turns)) % 8]] = state[thisFace[i]];
 		}
 	}
 
@@ -490,10 +490,10 @@ public class Cube {
 	 * @param newStateArray the array that will represent the state of
 	 *                      the cube after all rotations
 	 */
-	private void rotateSide(int[] theSides, int turns, char[] newStateArray) {
+	private static void rotateSide(char[] state, int[] theSides, int turns, char[] newStateArray) {
 		for (int i = 0; i < theSides.length; i++) {
 			int moveInt = theSides[(i + (3 * turns)) % theSides.length];
-			newStateArray[moveInt] = this.state[theSides[i]];
+			newStateArray[moveInt] = state[theSides[i]];
 		}
 	}
 
@@ -511,7 +511,7 @@ public class Cube {
 	 * @return a String that represents the variable-based number representation
 	 *         of the given corner or edge.
 	 */
-	private String encode(HashMap<Integer, Integer> mappedSides, int resultLength) {
+	private static String encode(HashMap<Integer, Integer> mappedSides, int resultLength) {
 		String[] result = new String[resultLength];
 		for (int i = 0; i < mappedSides.size(); i++) {
 			// Find the shift amount for this current position
@@ -538,8 +538,8 @@ public class Cube {
 	 * @return A string that represents the unique state of the corners
 	 * 		   in a variable-based numbering system.
 	 */
-	private String encodeCorners() {
-		return encode(mapCorners(), 8);
+	public static String encodeCorners(char[] state) {
+		return encode(mapCorners(state), 8);
 	}
 
 	/**
@@ -549,45 +549,44 @@ public class Cube {
 	 * Please reference the CORNERS[][] variable to find out
 	 * which corners are which.
 	 */
-	private HashMap<Integer, Integer> mapCorners() {
+	private static HashMap<Integer, Integer> mapCorners(char[] state) {
 		HashMap<Integer, Integer> result = new HashMap<Integer, Integer>();
-		for(int j = 0; j < Cube.CORNERS.length; j++) {
+		int[][] corners = initCorners();
+		HashMap<String, Integer> goalCorners = initGoalCorners();
+		for(int j = 0; j < corners.length; j++) {
 			String needle = "";
-			for (int s : Cube.CORNERS[j]) {
-				needle += this.state[s];
+			for (int s : corners[j]) {
+				needle += state[s];
 			}
 			char[] chars = needle.toCharArray();
 			Arrays.sort(chars);
-			result.put(Cube.GOALCORNERS.get(new String(chars)), j);
+			result.put(goalCorners.get(new String(chars)), j);
 		}
 		return result;
 	}
 
-    //*************
+	/**
+	 *
+	 * @param encodeCorner  the key that will identify the stored cube state
+	 * @param cube the value (cube state) after a rotation
+	 * @return a Map<Integer, String> where the key is a integer and the value is
+	 * a cube state after a rotation.
+	 */
+	private Map<String, String> cornersTable(String encodeCorner, String cube) {
+		Map<String, String> cornerTable;
+		cornerTable = new HashMap<String, String>();
 
-    /**
-     *
-     * @param encodeCorner  the key that will identify the stored cube state
-     * @param cube the value (cube state) after a rotation
-     * @return a Map<Integer, String> where the key is a integer and the value is
-     * a cube state after a rotation.
-     */
-    private Map<String, String> cornersTable(String encodeCorner, String cube) {
-        Map<String, String> cornerTable;
-        cornerTable = new HashMap<String, String>();
+		cornerTable.put(encodeCorner, cube);
 
-        cornerTable.put(encodeCorner, cube);
-
-        return cornerTable;
-    }
-    //***************
+		return cornerTable;
+	}
 
 	/**
 	 * Calls the internal encode() function for the edges.
 	 * @return A string that represents the unique state of the edges
 	 * 		   in a variable-based numbering system.
 	 */
-	private String encodeEdges() {
+	public String encodeEdges() {
 		return encode(mapEdges(), 12);
 	}
 
@@ -610,51 +609,6 @@ public class Cube {
 		}
 		return result;
 	}
-
-//    public void rotateAllFaces () {
-//        //Rotates the R face three times and stores the state after each individual rotation
-//        //Then rotates G face three times and stores the state after each individual rotation
-//        //And so on...
-//        String faceColors[] = {"R", "G", "B", "O", "Y", "W"};
-//        for (int q = 0; q < faceColors.length; q++) {
-//
-//            for (int i = 0; i < 3; i++) {
-//                this.rotate(faceColors[q].charAt(0), 1);
-//                String x = this.toString();
-//                String encodeCorners = this.encodeCorners();
-//                Map state = this.cornersTable(encodeCorners, x);
-//				System.out.println(this.encodeCorners());
-//                System.out.println(state.get(encodeCorners));
-//            }
-//        }
-//
-//    }
-
-    public void rotationsForCorners () {
-        String currentState = GOAL;
-        Map cTable = null;
-        for (int i = 0; i < 25; i++) {   //Would be 'i < 88,179,840' but for testing kept it small
-
-            for ( int j = 0; j < 53; j++) {
-                this.rotate(currentState.charAt(j), 1);
-                String newCurrentState = this.toString();
-                String encodeCorners = this.encodeCorners();
-
-                if (cTable.containsValue(encodeCorners)) {
-                      this.rotate(currentState.charAt(j), 1);
-//                    newCurrentState = this.toString();
-//                    encodeCorners = this.encodeCorners();
-                }
-                else {
-                    cTable = this.cornersTable(encodeCorners, newCurrentState);
-                    System.out.println("State " + i + "\n");
-                    System.out.println(this.encodeCorners());
-                    //System.out.println(cTable.get(encodeCorners));
-                }
-            }
-
-        }
-    }
 
 	/**
 	 * Super nice way to print out the cube in a 2D fashion
@@ -696,10 +650,6 @@ public class Cube {
 		System.out.println("Is a valid cube: " + cube.verifyCube());
 		if (cube.verifyCube()) {
 			System.out.println(cube.isSolved());
-			//cube.rotate("R".charAt(0), 1);
-            //cube.rotateAllFaces();
-            cube.rotationsForCorners();
-
 		}
 
 	}
