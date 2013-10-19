@@ -87,6 +87,14 @@ public class Cube {
 		this.state = this.readTextFile(fileName);
 	}
 
+	/**
+	 * Initializes the Cube to the given state
+	 * @param state the char[] that represents a state
+	 */
+	public Cube(char[] state) {
+		this.state = state;
+	}
+
 	private static int[][] initCorners() {
 		int[][] corners = new int[][] {
 				new int[3],

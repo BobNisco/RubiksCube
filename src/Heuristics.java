@@ -8,7 +8,7 @@ public class Heuristics {
 	 */
 	public static void generateCornerHeuristics() {
 		// Make a cube and initialize it with a solved cube state
-		Cube cube = new Cube("input1.txt");
+		Cube cube = new Cube(Cube.GOAL.toCharArray());
 
 		// Make a new Queue to perform BFS
 		Queue<HeuristicNode> q = new LinkedList<HeuristicNode>();
