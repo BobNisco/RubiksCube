@@ -611,23 +611,49 @@ public class Cube {
 		return result;
 	}
 
-    public void rotateAllFaces () {
-        //Rotates the R face three times and stores the state after each individual rotation
-        //Then rotates G face three times and stores the state after each individual rotation
-        //And so on...
-        String faceColors[] = {"R", "G", "B", "O", "Y", "W"};
-        for (int q = 0; q < faceColors.length; q++) {
+//    public void rotateAllFaces () {
+//        //Rotates the R face three times and stores the state after each individual rotation
+//        //Then rotates G face three times and stores the state after each individual rotation
+//        //And so on...
+//        String faceColors[] = {"R", "G", "B", "O", "Y", "W"};
+//        for (int q = 0; q < faceColors.length; q++) {
+//
+//            for (int i = 0; i < 3; i++) {
+//                this.rotate(faceColors[q].charAt(0), 1);
+//                String x = this.toString();
+//                String encodeCorners = this.encodeCorners();
+//                Map state = this.cornersTable(encodeCorners, x);
+//				System.out.println(this.encodeCorners());
+//                System.out.println(state.get(encodeCorners));
+//            }
+//        }
+//
+//    }
 
-            for (int i = 0; i < 3; i++) {
-                this.rotate(faceColors[q].charAt(0), 1);
-                String x = this.toString();
+    public void rotationsForCorners () {
+        String currentState = GOAL;
+        Map cTable = null;
+        for (int i = 0; i < 25; i++) {   //Would be 'i < 88,179,840' but for testing kept it small
+
+            for ( int j = 0; j < 53; j++) {
+                this.rotate(currentState.charAt(j), 1);
+                String newCurrentState = this.toString();
                 String encodeCorners = this.encodeCorners();
-                Map state = this.cornersTable(encodeCorners, x);
-				System.out.println(this.encodeCorners());
-                System.out.println(state.get(encodeCorners));
-            }
-        }
 
+                if (cTable.containsValue(encodeCorners)) {
+                      this.rotate(currentState.charAt(j), 1);
+//                    newCurrentState = this.toString();
+//                    encodeCorners = this.encodeCorners();
+                }
+                else {
+                    cTable = this.cornersTable(encodeCorners, newCurrentState);
+                    System.out.println("State " + i + "\n");
+                    System.out.println(this.encodeCorners());
+                    //System.out.println(cTable.get(encodeCorners));
+                }
+            }
+
+        }
     }
 
 	/**
@@ -671,7 +697,8 @@ public class Cube {
 		if (cube.verifyCube()) {
 			System.out.println(cube.isSolved());
 			//cube.rotate("R".charAt(0), 1);
-            cube.rotateAllFaces();
+            //cube.rotateAllFaces();
+            cube.rotationsForCorners();
 
 		}
 
