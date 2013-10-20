@@ -1,6 +1,6 @@
 import java.util.*;
 
-public class Heuristics {
+public class CornerHeuristics {
 	/**
 	 * As per Korf's paper, we should generate all of the permutations
 	 * by starting with a solved cube and then performing a breadth-
@@ -65,6 +65,6 @@ public class Heuristics {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		Heuristics.generateCornerHeuristics();
+		CornerHeuristics.generateCornerHeuristics();
 	}
 }
