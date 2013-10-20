@@ -16,3 +16,8 @@
 .idea/
 
 /bin
+/out
+
+# Temporarily don't include csv's while 
+# we work out the heuristics
+*.csv

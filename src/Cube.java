@@ -25,7 +25,16 @@ public class Cube {
 	 * Each row represents a physical corner cubie on the Rubik's cube.
 	 * Each column in the row represents a location in the serialized version of the cube.
 	 */
-	public final static int[][] CORNERS = initCorners();
+	public final static int[][] CORNERS = {
+			{0, 9, 51},
+			{2, 17, 53},
+			{6, 11, 12},
+			{8, 14, 15},
+			{29, 30, 36},
+			{32, 33, 38},
+			{27, 42, 45},
+			{35, 44, 47}
+	};
 
 	/**
 	 * A two-dimensional primitive array of ints representing the location of the edges.
@@ -33,7 +42,20 @@ public class Cube {
 	 * Each row represents a physical edge cubie on the Rubik's cube.
 	 * Each column in the row represents a location in the serialize version of the cube.
 	 */
-	public final static int[][] EDGES = initEdges();
+	public final static int[][] EDGES = {
+			{1, 52},
+			{3, 10},
+			{5, 16},
+			{7, 13},
+			{18, 48},
+			{20, 21},
+			{23, 24},
+			{26, 50},
+			{28, 39},
+			{31, 37},
+			{34, 41},
+			{43, 46}
+	};
 
 	/**
 	 * A HashMap<Character, int[]> where the key is the character of the
@@ -93,86 +115,6 @@ public class Cube {
 	 */
 	public Cube(char[] state) {
 		this.state = state;
-	}
-
-	private static int[][] initCorners() {
-		int[][] corners = new int[][] {
-				new int[3],
-				new int[3],
-				new int[3],
-				new int[3],
-				new int[3],
-				new int[3],
-				new int[3],
-				new int[3]
-		};
-		corners[0][0] = 0;
-		corners[0][1] = 9;
-		corners[0][2] = 51;
-		corners[1][0] = 2;
-		corners[1][1] = 17;
-		corners[1][2] = 53;
-		corners[2][0] = 6;
-		corners[2][1] = 11;
-		corners[2][2] = 12;
-		corners[3][0] = 8;
-		corners[3][1] = 14;
-		corners[3][2] = 15;
-		corners[4][0] = 29;
-		corners[4][1] = 30;
-		corners[4][2] = 36;
-		corners[5][0] = 32;
-		corners[5][1] = 33;
-		corners[5][2] = 38;
-		corners[6][0] = 27;
-		corners[6][1] = 42;
-		corners[6][2] = 45;
-		corners[7][0] = 35;
-		corners[7][1] = 44;
-		corners[7][2] = 47;
-		return corners;
-	}
-
-	private static int[][] initEdges() {
-		int[][] edges = new int[][] {
-				new int[2],
-				new int[2],
-				new int[2],
-				new int[2],
-				new int[2],
-				new int[2],
-				new int[2],
-				new int[2],
-				new int[2],
-				new int[2],
-				new int[2],
-				new int[2]
-		};
-		edges[0][0] = 1;
-		edges[0][1] = 52;
-		edges[1][0] = 3;
-		edges[1][1] = 10;
-		edges[2][0] = 5;
-		edges[2][1] = 16;
-		edges[3][0] = 7;
-		edges[3][1] = 13;
-		edges[4][0] = 18;
-		edges[4][1] = 48;
-		edges[5][0] = 20;
-		edges[5][1] = 21;
-		edges[6][0] = 23;
-		edges[6][1] = 24;
-		edges[7][0] = 26;
-		edges[7][1] = 50;
-		edges[8][0] = 28;
-		edges[8][1] = 39;
-		edges[9][0] = 31;
-		edges[9][1] = 37;
-		edges[10][0] = 34;
-		edges[10][1] = 41;
-		edges[11][0] = 43;
-		edges[11][1] = 46;
-		return edges;
 	}
 
 	private static HashMap<Character, int[]> initFaces() {
@@ -559,7 +501,7 @@ public class Cube {
 	 */
 	private static HashMap<Integer, Integer> mapCorners(char[] state) {
 		HashMap<Integer, Integer> result = new HashMap<Integer, Integer>();
-		int[][] corners = initCorners();
+		int[][] corners = Cube.CORNERS;
 		HashMap<String, Integer> goalCorners = initGoalCorners();
 		for(int j = 0; j < corners.length; j++) {
 			String needle = "";
