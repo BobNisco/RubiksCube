@@ -31,7 +31,7 @@ public class CubeNode {
 	 * @return an ArrayList<CubeNode> of all successors for
 	 * the param node
 	 */
-	public static ArrayList<CubeNode> getSuccesors(CubeNode node) {
+	public static ArrayList<CubeNode> getSuccessors(CubeNode node) {
 		ArrayList<CubeNode> successors = new ArrayList<CubeNode>();
 		for (Map.Entry<Character, int[]> face : Cube.FACES.entrySet()) {
 			// Make a clockwise turn

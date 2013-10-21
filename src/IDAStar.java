@@ -59,7 +59,7 @@ public class IDAStar {
 		}
 		// TODO: Add to solution set
 		// Get all of the possible successors from the given node
-		ArrayList<CubeNode> successors = CubeNode.getSuccesors(node);
+		ArrayList<CubeNode> successors = CubeNode.getSuccessors(node);
 		// Iterate over each of the successors
 		for (CubeNode successor : successors) {
 			// Calculate f for this successor node
