@@ -11,16 +11,16 @@ public class CornerHeuristics {
 		Cube cube = new Cube(Cube.GOAL.toCharArray());
 
 		// Make a new Queue to perform BFS
-		Queue<HeuristicNode> q = new LinkedList<HeuristicNode>();
+		Queue<CubeNode> q = new LinkedList<CubeNode>();
 
 		// Put the solved/initial state of the corners on the queue
-		q.add(new HeuristicNode(cube.state, 0));
+		q.add(new CubeNode(cube.state, 0));
 		int[] corners = new int[88179840];
 		Set<Map.Entry<Character, int[]>> faces = Cube.FACES.entrySet();
 
 		// Iterate until we can't anymore
 		while (!q.isEmpty()) {
-			HeuristicNode current = q.poll();
+			CubeNode current = q.poll();
 			// For each cube state we're given, we need to try all of
 			// possible turns of each other other faces
 			for (Map.Entry<Character, int[]> face : faces) {
@@ -35,7 +35,7 @@ public class CornerHeuristics {
 				// Check to see if this combination has been made before
 				if (corners[encodedCorner] == 0) {
 					// This is a new combination, let's add it to the queue
-					q.add(new HeuristicNode(newState, current.heuristic + 1));
+					q.add(new CubeNode(newState, current.heuristic + 1));
 				}
 
 				// Second clockwise turn
@@ -44,7 +44,7 @@ public class CornerHeuristics {
 				// Check to see if this combination has been made before
 				if (corners[encodedCorner] == 0) {
 					// This is a new combination, let's add it to the queue
-					q.add(new HeuristicNode(newState, current.heuristic + 1));
+					q.add(new CubeNode(newState, current.heuristic + 1));
 				}
 			}
 

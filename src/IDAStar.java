@@ -19,14 +19,14 @@ public class IDAStar {
 		// Load in the corner heuristics table from the file
 		int[] corners = readCornerHeuristics();
 		// Initialize the root node with the start state
-		HeuristicNode start = new HeuristicNode(startState, corners[Integer.parseInt(Cube.encodeCorners(startState))]);
+		CubeNode start = new CubeNode(startState, corners[Integer.parseInt(Cube.encodeCorners(startState))]);
 		System.out.println("Beginning heuristic value: " + start.heuristic);
 		// Initialize nextBound with our starting heuristic value
 		nextBound = start.heuristic;
 		// Initialize nodesVisited
 		nodesVisited = 0;
 		// The end node once IDA* finishes
-		HeuristicNode end = null;
+		CubeNode end = null;
 
 		// Loop until we find a solution
 		while (end == null) {
@@ -51,7 +51,7 @@ public class IDAStar {
 	 *              expand nodes or not
 	 * @return the node representation of the goal state
 	 */
-	public static HeuristicNode search(HeuristicNode node, int g, int bound) {
+	public static CubeNode search(CubeNode node, int g, int bound) {
 		nodesVisited++;
 		// If we have found the goal, return the goal node
 		if (Arrays.equals(node.state, Cube.GOAL.toCharArray())) {
@@ -59,15 +59,15 @@ public class IDAStar {
 		}
 		// TODO: Add to solution set
 		// Get all of the possible successors from the given node
-		ArrayList<HeuristicNode> successors = HeuristicNode.getSuccesors(node);
+		ArrayList<CubeNode> successors = CubeNode.getSuccesors(node);
 		// Iterate over each of the successors
-		for (HeuristicNode successor : successors) {
+		for (CubeNode successor : successors) {
 			// Calculate f for this successor node
 			int f = g + successor.heuristic;
 			// Don't expand more nodes if we are above the bound
 			if (f <= bound) {
 				// Expand this node's successors
-				HeuristicNode t = search(successor, g + 1, bound);
+				CubeNode t = search(successor, g + 1, bound);
 				if (t != null) {
 					return t;
 				}
