@@ -2,10 +2,7 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.Map;
+import java.util.*;
 
 /**
  * A representation of a physical Rubik's cube.
@@ -516,22 +513,6 @@ public class Cube {
 	}
 
 	/**
-	 *
-	 * @param encodeCorner  the key that will identify the stored cube state
-	 * @param cube the value (cube state) after a rotation
-	 * @return a Map<Integer, String> where the key is a integer and the value is
-	 * a cube state after a rotation.
-	 */
-	private Map<String, String> cornersTable(String encodeCorner, String cube) {
-		Map<String, String> cornerTable;
-		cornerTable = new HashMap<String, String>();
-
-		cornerTable.put(encodeCorner, cube);
-
-		return cornerTable;
-	}
-
-	/**
 	 * Calls the internal encode() function for the edges.
 	 * @return A string that represents the unique state of the edges
 	 * 		   in a variable-based numbering system.
@@ -558,6 +539,29 @@ public class Cube {
 			result.put(Cube.GOALEDGES.get(new String(needle)), i);
 		}
 		return result;
+	}
+
+	/**
+	 * Random generate a valid cube by starting in the goal state
+	 * then doing 100 random rotations just as outlined the
+	 * "Experimental Results" section of Korf's paper
+	 * Finding Optimal Solutions to Rubik's Cube Using Pattern Databases
+	 * @return a randomly generated cube
+	 */
+	public static Cube generateRandomCube() {
+		// Initialize a cube in a goal state
+		Cube cube = new Cube(Cube.GOAL.toCharArray());
+
+		// As per Korf's paper, they generated random Cubes by doing
+		// 100 random moves from the goal state.
+		for (int i = 0; i < 100; i++) {
+			Random r = new Random();
+			// Pick a random face to rotate
+			ArrayList<Character> keys = new ArrayList<Character>(Cube.FACES.keySet());
+			// Perform the rotation
+			cube.state = Cube.rotate(cube.state, keys.get(r.nextInt(keys.size())), 1);
+		}
+		return cube;
 	}
 
 	/**
