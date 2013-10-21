@@ -517,8 +517,13 @@ public class Cube {
 	 * @return A string that represents the unique state of the edges
 	 * 		   in a variable-based numbering system.
 	 */
-	public String encodeEdges() {
-		return encode(mapEdges(), 12);
+	public static String encodeEdges(char[] state) {
+		HashMap<Integer, Integer> mappedEdges = mapEdges(state);
+		StringBuilder builder = new StringBuilder();
+		for (int i = 0; i < mappedEdges.size(); i++) {
+			builder.append(mappedEdges.get(i));
+		}
+		return builder.toString();
 	}
 
 	/**
@@ -528,12 +533,12 @@ public class Cube {
 	 * Please reference the EDGES[][] variable to find out
 	 * which edges are which.
 	 */
-	private HashMap<Integer, Integer> mapEdges() {
+	private static HashMap<Integer, Integer> mapEdges(char[] state) {
 		HashMap<Integer, Integer> result = new HashMap<Integer, Integer>();
 		for (int i = 0; i < Cube.EDGES.length; i++) {
 			char[] needle = new char[Cube.EDGES[i].length];
 			for (int j = 0; j < Cube.EDGES[i].length; j++) {
-				needle[j] = this.state[Cube.EDGES[i][j]];
+				needle[j] = state[Cube.EDGES[i][j]];
 			}
 			Arrays.sort(needle);
 			result.put(Cube.GOALEDGES.get(new String(needle)), i);

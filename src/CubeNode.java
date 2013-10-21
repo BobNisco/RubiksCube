@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Map;
 
 /**
@@ -37,7 +38,17 @@ public class CubeNode {
 			// Make a clockwise turn
 			char[] newState = Cube.rotate(node.state, face.getKey(), 1);
 			int encodedCorner = Integer.parseInt(Cube.encodeCorners(newState));
-			successors.add(new CubeNode(newState, IDAStar.corners[encodedCorner]));
+			int encodedEdgeSetOne = Integer.parseInt(Cube.encodeEdges(newState).substring(0, 6));
+			int[] possibleHeuristics = new int[3];
+			possibleHeuristics[0] = IDAStar.corners[encodedCorner];
+			possibleHeuristics[1] = IDAStar.edgesSetOne[encodedEdgeSetOne];
+			int max = possibleHeuristics[0];
+			for (int i = 1; i < possibleHeuristics.length; i++) {
+				if (possibleHeuristics[i] > max) {
+					max = possibleHeuristics[i];
+				}
+			}
+			successors.add(new CubeNode(newState, max));
 		}
 		return successors;
 	}

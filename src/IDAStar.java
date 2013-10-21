@@ -7,7 +7,8 @@ import java.util.Arrays;
 
 public class IDAStar {
 
-	public static final int[] corners = readCornerHeuristics();
+	public static final int[] corners = readHeuristics(88179840, "src/corners.csv");
+	public static final int[] edgesSetOne = readHeuristics(42577920, "src/edgesSetOne.csv");
 	public static int nextBound;
 	public static int nodesVisited;
 
@@ -16,8 +17,6 @@ public class IDAStar {
 	 * @param startState the starting state of the cube
 	 */
 	public static void performIDAStar(char[] startState) {
-		// Load in the corner heuristics table from the file
-		int[] corners = readCornerHeuristics();
 		// Initialize the root node with the start state
 		CubeNode start = new CubeNode(startState, corners[Integer.parseInt(Cube.encodeCorners(startState))]);
 		System.out.println("Beginning heuristic value: " + start.heuristic);
@@ -82,15 +81,13 @@ public class IDAStar {
 	 * @return int[88179840] where the values will be of the previously
 	 * generated heuristics for the valid corner states.
 	 */
-	public static int[] readCornerHeuristics() {
+	public static int[] readHeuristics(int h, String fileName) {
 		// Our corners heuristics array will have 88179840
 		// elements, but not all of them will have a value
 		// as we only calculated heuristics for valid corner
 		// positions starting at the goal state rather than
 		// all possible permutations of corners.
-		int[] corners = new int[88179840];
-
-		String fileName = "src/corners.csv";
+		int[] heuristics = new int[h];
 		FileReader file = null;
 		String line;
 		try {
@@ -101,7 +98,9 @@ public class IDAStar {
 				String[] lineData = line.split(",");
 				// lineData[0] will be the encoded corner value
 				// lineData[1] will be the calculated heuristic
-				corners[Integer.parseInt(lineData[0])] = Integer.parseInt(lineData[1]);
+				if (!(lineData[0].equals("") || lineData[1].equals(""))) {
+					heuristics[Integer.parseInt(lineData[0])] = Integer.parseInt(lineData[1]);
+				}
 			}
 		} catch (FileNotFoundException e) {
 			throw new RuntimeException("File not found");
@@ -117,7 +116,7 @@ public class IDAStar {
 			}
 		}
 
-		return corners;
+		return heuristics;
 	}
 
 	/**
