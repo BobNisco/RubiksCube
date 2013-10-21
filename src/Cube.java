@@ -600,6 +600,8 @@ public class Cube {
 		System.out.println("Is a valid cube: " + cube.verifyCube());
 		if (cube.verifyCube()) {
 			System.out.println(cube.isSolved());
+			cube.state = Cube.rotate(cube.state, "R".charAt(0), 1);
+			System.out.println(cube);
 		}
 
 	}

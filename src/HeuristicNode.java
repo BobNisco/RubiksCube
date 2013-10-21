@@ -1,3 +1,6 @@
+import java.util.ArrayList;
+import java.util.Map;
+
 /**
  * While doing the BFS to enumerate all valid permutations in a cube,
  * this will keep track of states and their heuristic value.
@@ -20,5 +23,16 @@ public class HeuristicNode {
 	public HeuristicNode(char[] state, int heuristic) {
 		this.state = state;
 		this.heuristic = heuristic;
+	}
+
+	public static ArrayList<HeuristicNode> getSuccesors(HeuristicNode node) {
+		ArrayList<HeuristicNode> successors = new ArrayList<HeuristicNode>();
+		for (Map.Entry<Character, int[]> face : Cube.FACES.entrySet()) {
+			// Make a clockwise turn
+			char[] newState = Cube.rotate(node.state, face.getKey(), 1);
+			int encodedCorner = Integer.parseInt(Cube.encodeCorners(newState));
+			successors.add(new HeuristicNode(newState, IDAStar.corners[encodedCorner]));
+		}
+		return successors;
 	}
 }
