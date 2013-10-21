@@ -9,6 +9,7 @@ public class IDAStar {
 
 	public static final int[] corners = readCornerHeuristics();
 	public static int nextBound;
+	public static int nodesVisited;
 
 	/**
 	 * Performs the IDA* search for our Rubik's cube.
@@ -22,16 +23,22 @@ public class IDAStar {
 		System.out.println("Beginning heuristic value: " + start.heuristic);
 		// Initialize nextBound with our starting heuristic value
 		nextBound = start.heuristic;
+		// Initialize nodesVisited
+		nodesVisited = 0;
 		// The end node once IDA* finishes
 		HeuristicNode end = null;
 
 		// Loop until we find a solution
 		while (end == null) {
+			System.out.println("Current bound is: " + nextBound);
+			System.out.println("# of Nodes visited: " + nodesVisited);
 			end = search(start, 0, nextBound);
 			// The iterative-deepening portion of IDA*
 			// Increment the bound if we haven't found a solution
 			nextBound++;
 		}
+
+		System.out.println("Solved!");
 		System.out.println(new Cube(end.state));
 	}
 
@@ -45,6 +52,7 @@ public class IDAStar {
 	 * @return the node representation of the goal state
 	 */
 	public static HeuristicNode search(HeuristicNode node, int g, int bound) {
+		nodesVisited++;
 		// If we have found the goal, return the goal node
 		if (Arrays.equals(node.state, Cube.GOAL.toCharArray())) {
 			return node;

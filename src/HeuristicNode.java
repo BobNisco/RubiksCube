@@ -25,6 +25,12 @@ public class HeuristicNode {
 		this.heuristic = heuristic;
 	}
 
+	/**
+	 * Generates all successors of the given node.
+	 * @param node the node to find successors for
+	 * @return an ArrayList<HeuristicNode> of all successors for
+	 * the param node
+	 */
 	public static ArrayList<HeuristicNode> getSuccesors(HeuristicNode node) {
 		ArrayList<HeuristicNode> successors = new ArrayList<HeuristicNode>();
 		for (Map.Entry<Character, int[]> face : Cube.FACES.entrySet()) {
