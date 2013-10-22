@@ -601,7 +601,7 @@ public class Cube {
 	public static void main(String[] args) {
 		Cube cube;
 		if (args.length <= 0) {
-			cube = new Cube("input5.txt");
+			cube = new Cube("input/invalid_input1.txt");
 		} else {
 			cube = new Cube(args[0]);
 		}

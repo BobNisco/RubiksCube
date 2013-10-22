@@ -125,7 +125,7 @@ public class IDAStar {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		Cube cube = new Cube("input2.txt");
+		Cube cube = new Cube("input/valid_input2.txt");
 		System.out.println(cube);
 		IDAStar.performIDAStar(cube.state);
 	}
