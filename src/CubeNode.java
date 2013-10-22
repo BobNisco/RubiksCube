@@ -38,10 +38,13 @@ public class CubeNode {
 			// Make a clockwise turn
 			char[] newState = Cube.rotate(node.state, face.getKey(), 1);
 			int encodedCorner = Integer.parseInt(Cube.encodeCorners(newState));
-			int encodedEdgeSetOne = Integer.parseInt(Cube.encodeEdges(newState).substring(0, 6));
+			String encodedEdges = Cube.encodeEdges(newState);
+			int encodedEdgeSetOne = Integer.parseInt(encodedEdges.substring(0, 6));
+			int encodedEdgeSetTwo = Integer.parseInt(encodedEdges.substring(6, 12));
 			int[] possibleHeuristics = new int[3];
 			possibleHeuristics[0] = IDAStar.corners[encodedCorner];
 			possibleHeuristics[1] = IDAStar.edgesSetOne[encodedEdgeSetOne];
+			possibleHeuristics[2] = IDAStar.edgesSetTwo[encodedEdgeSetTwo];
 			int max = possibleHeuristics[0];
 			for (int i = 1; i < possibleHeuristics.length; i++) {
 				if (possibleHeuristics[i] > max) {

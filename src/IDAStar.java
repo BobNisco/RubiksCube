@@ -9,6 +9,7 @@ public class IDAStar {
 
 	public static final int[] corners = readHeuristics(88179840, "src/corners.csv");
 	public static final int[] edgesSetOne = readHeuristics(42577920, "src/edgesSetOne.csv");
+	public static final int[] edgesSetTwo = readHeuristics(42577920, "src/edgesSetTwo.csv");
 	public static int nextBound;
 	public static int nodesVisited;
 

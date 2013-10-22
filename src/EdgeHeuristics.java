@@ -73,9 +73,13 @@ public class EdgeHeuristics {
 	}
 
 	public static void main(String[] args) {
-		// Generate first set of edge heuristics
-		EdgeHeuristics.generateEdgeHeuristics(0);
-		// Generate second set of edge heuristics
-		//EdgeHeuristics.generateEdgeHeuristics(1);
+		if (args.length <= 0) {
+			// Generate first set of edge heuristics
+			//EdgeHeuristics.generateEdgeHeuristics(0);
+			// Generate second set of edge heuristics
+			EdgeHeuristics.generateEdgeHeuristics(1);
+		} else {
+			EdgeHeuristics.generateEdgeHeuristics(Integer.parseInt(args[0]));
+		}
 	}
 }
