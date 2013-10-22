@@ -40,6 +40,7 @@ public class IDAStar {
 
 		System.out.println("Solved!");
 		System.out.println(new Cube(end.state));
+		System.out.println(end.r);
 	}
 
 	/**
@@ -57,7 +58,6 @@ public class IDAStar {
 		if (Arrays.equals(node.state, Cube.GOAL.toCharArray())) {
 			return node;
 		}
-		// TODO: Add to solution set
 		// Get all of the possible successors from the given node
 		ArrayList<CubeNode> successors = CubeNode.getSuccessors(node);
 		// Iterate over each of the successors
@@ -126,6 +126,7 @@ public class IDAStar {
 	 */
 	public static void main(String[] args) {
 		Cube cube = new Cube("input/valid_input2.txt");
+		cube = Cube.generateRandomCube();
 		System.out.println(cube);
 		IDAStar.performIDAStar(cube.state);
 	}

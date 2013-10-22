@@ -16,6 +16,8 @@ public class CubeNode {
 	 */
 	public int heuristic;
 
+	public String r;
+
 	/**
 	 *
 	 * @param state the state of the cube
@@ -24,7 +26,15 @@ public class CubeNode {
 	public CubeNode(char[] state, int heuristic) {
 		this.state = state;
 		this.heuristic = heuristic;
+		this.r = "";
 	}
+
+	public CubeNode(char[] state, int heuristic, String r) {
+		this.state = state;
+		this.heuristic = heuristic;
+		this.r = r;
+	}
+
 
 	/**
 	 * Generates all successors of the given node.
@@ -57,7 +67,7 @@ public class CubeNode {
 				}
 			}
 			// Add the rotated state and it's heuristic value to the successors
-			successors.add(new CubeNode(newState, max));
+			successors.add(new CubeNode(newState, IDAStar.corners[encodedCorner], node.r + face.getKey() + "1")) ;
 		}
 		return successors;
 	}

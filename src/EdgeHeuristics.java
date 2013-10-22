@@ -56,7 +56,7 @@ public class EdgeHeuristics {
 				// Check to see if this combination has been made before
 				if (edgeHeuristics[encodedEdge] == 0) {
 					// This is a new combination, let's add it to the queue
-					q.add(new CubeNode(newState, current.heuristic + 1));
+					q.add(new CubeNode(newState, current.heuristic + 2));
 				}
 			}
 
