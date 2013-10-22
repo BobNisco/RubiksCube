@@ -357,15 +357,20 @@ public class Cube {
 			}
 		}
 		try {
-			// Encode the corners
+			// Encode the corners and edges
 			String encodedCorners = Cube.encodeCorners(state);
 			String encodedEdges = Cube.encodeEdges(state);
 			int encodedEdgesSetOne = Integer.parseInt(encodedEdges.substring(0, 6));
 			int encodedEdgesSetTwo = Integer.parseInt(encodedEdges.substring(6, 12));
+			// Attempt to find the encoded state of this cube in the heuristic tables.
+			// These method calls will throw exceptions if they are not found - thus
+			// we can determine that the given cube state is invalid.
 			int h = IDAStar.corners[Integer.parseInt(encodedCorners)];
 			h = IDAStar.edgesSetOne[encodedEdgesSetOne];
 			h = IDAStar.edgesSetTwo[encodedEdgesSetTwo];
 		} catch (Exception e) {
+			// If anything in the try block throws an exception, we know that
+			// the given cube state is invalid, thus we return false
 			return false;
 		}
 		return true;

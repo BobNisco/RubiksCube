@@ -37,20 +37,26 @@ public class CubeNode {
 		for (Map.Entry<Character, int[]> face : Cube.FACES.entrySet()) {
 			// Make a clockwise turn
 			char[] newState = Cube.rotate(node.state, face.getKey(), 1);
+			// Encode the corner
 			int encodedCorner = Integer.parseInt(Cube.encodeCorners(newState));
+			// Encode the edges
 			String encodedEdges = Cube.encodeEdges(newState);
 			int encodedEdgeSetOne = Integer.parseInt(encodedEdges.substring(0, 6));
 			int encodedEdgeSetTwo = Integer.parseInt(encodedEdges.substring(6, 12));
+			// Find all of the heuristic values for the given corner,
+			// and two edge sets
 			int[] possibleHeuristics = new int[3];
 			possibleHeuristics[0] = IDAStar.corners[encodedCorner];
 			possibleHeuristics[1] = IDAStar.edgesSetOne[encodedEdgeSetOne];
 			possibleHeuristics[2] = IDAStar.edgesSetTwo[encodedEdgeSetTwo];
+			// Find the maximum of the 3 heuristics as per the details of Korf's paper
 			int max = possibleHeuristics[0];
 			for (int i = 1; i < possibleHeuristics.length; i++) {
 				if (possibleHeuristics[i] > max) {
 					max = possibleHeuristics[i];
 				}
 			}
+			// Add the rotated state and it's heuristic value to the successors
 			successors.add(new CubeNode(newState, max));
 		}
 		return successors;
