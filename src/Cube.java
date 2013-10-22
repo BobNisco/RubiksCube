@@ -345,29 +345,29 @@ public class Cube {
 	 * Verifies if the current state of the cube is valid.
 	 * @return true if state is valid, false if not.
 	 */
-	private boolean verifyCube() {
+	private static boolean verifyCube(char[] state) {
 		// Check that the length is 54
-		if (this.state.length != 54) {
+		if (state.length != 54) {
 			return false;
-		}
-		// Check that each color is either R O Y G B or W
-		for (int i = 0; i < this.state.length; i++) {
-			if (!(this.state[i] == "R".charAt(0) ||
-				this.state[i] == "O".charAt(0) ||
-				this.state[i] == "Y".charAt(0) ||
-				this.state[i] == "G".charAt(0) ||
-				this.state[i] == "B".charAt(0) ||
-				this.state[i] == "W".charAt(0))) {
-				return false;
-			}
 		}
 		// Check that the centers are of the proper color
 		for (Map.Entry<Character, Integer> center : Cube.CENTERS.entrySet()) {
-			if (this.state[center.getValue()] != center.getKey()) {
+			if (state[center.getValue()] != center.getKey()) {
 				return false;
 			}
 		}
-		// TODO:
+		try {
+			// Encode the corners
+			String encodedCorners = Cube.encodeCorners(state);
+			String encodedEdges = Cube.encodeEdges(state);
+			int encodedEdgesSetOne = Integer.parseInt(encodedEdges.substring(0, 6));
+			int encodedEdgesSetTwo = Integer.parseInt(encodedEdges.substring(6, 12));
+			int h = IDAStar.corners[Integer.parseInt(encodedCorners)];
+			h = IDAStar.edgesSetOne[encodedEdgesSetOne];
+			h = IDAStar.edgesSetTwo[encodedEdgesSetTwo];
+		} catch (Exception e) {
+			return false;
+		}
 		return true;
 	}
 
@@ -601,13 +601,13 @@ public class Cube {
 	public static void main(String[] args) {
 		Cube cube;
 		if (args.length <= 0) {
-			cube = new Cube("input1.txt");
+			cube = new Cube("input5.txt");
 		} else {
 			cube = new Cube(args[0]);
 		}
 		System.out.println(cube.toString());
-		System.out.println("Is a valid cube: " + cube.verifyCube());
-		if (cube.verifyCube()) {
+		System.out.println("Is a valid cube: " + Cube.verifyCube(cube.state));
+		if (Cube.verifyCube(cube.state)) {
 			System.out.println(cube.isSolved());
 			cube.state = Cube.rotate(cube.state, "R".charAt(0), 1);
 			System.out.println(cube);
