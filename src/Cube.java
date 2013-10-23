@@ -343,6 +343,7 @@ public class Cube {
 
 	/**
 	 * Verifies if the current state of the cube is valid.
+	 * @param state the state of the cube
 	 * @return true if state is valid, false if not.
 	 */
 	private static boolean verifyCube(char[] state) {
@@ -377,18 +378,8 @@ public class Cube {
 	}
 
 	/**
-	 *
-	 * @return true if the state equals the goal, false otherwise
-	 */
-	public boolean isSolved() {
-		if (new String(this.state).equals(Cube.GOAL)) {
-			return true;
-		}
-		return false;
-	}
-
-	/**
 	 * Does the actual rotation of a cube given the face and amount of clockwise turns.
+	 * @param state the state of the cube
 	 * @param face the character representing the color face to turn clockwise.
 	 * @param turns the number of clockwise turns.
 	 * @return true if rotate was successful, else false if there was an error.
@@ -422,6 +413,7 @@ public class Cube {
 
 	/**
 	 * Internal handler to rotate a face of the cube
+	 * @param state the state of the cube
 	 * @param thisFace the int[] representing the face we are rotating.
 	 *                 Should be an element of the Cube.FACES
 	 * @param turns the amount of times we will be rotating the cube
@@ -436,6 +428,7 @@ public class Cube {
 
 	/**
 	 * Internal handler to rotate a side of the cube
+	 * @param state the state of the cube
 	 * @param theSides the int[] representing the face we are rotating.
 	 *                 Should be an element of the Cube.SIDES
 	 * @param turns the amount of times we will be rotating the cube
@@ -450,7 +443,7 @@ public class Cube {
 	}
 
 	/**
-	 * Internal handler for encoding of corners or edges.
+	 * Internal handler for encoding of corners.
 	 * Does all of the variable-based encoding for either the corners
 	 * or edges. This function shouldn't necessarily be called directly,
 	 * but rather be called from the encodeCorners or encodeEdges functions.
@@ -487,6 +480,7 @@ public class Cube {
 
 	/**
 	 * Calls the internal encode() function for the corners.
+	 * @param state the state of the cube
 	 * @return A string that represents the unique state of the corners
 	 * 		   in a variable-based numbering system.
 	 */
@@ -496,6 +490,7 @@ public class Cube {
 
 	/**
 	 * Maps each corner to its current position in the cube.
+	 * @param state the state of the cube
 	 * @return a HashMap<Integer, Integer> where the key is the
 	 * corner and the value is the current position.
 	 * Please reference the CORNERS[][] variable to find out
@@ -519,6 +514,7 @@ public class Cube {
 
 	/**
 	 * Calls the internal encode() function for the edges.
+	 * @param state the state of the cube
 	 * @return A string that represents the unique state of the edges
 	 * 		   in a variable-based numbering system.
 	 */
@@ -533,6 +529,7 @@ public class Cube {
 
 	/**
 	 * Maps each edge to its current position in the cube.
+	 * @param state the state of the cube
 	 * @return a HashMap<Integer, Integer> where the key is the
 	 * corner and the value is the current position.
 	 * Please reference the EDGES[][] variable to find out
