@@ -328,7 +328,7 @@ public class Cube {
 		} catch (FileNotFoundException e) {
 			throw new RuntimeException("File not found");
 		} catch (IOException e) {
-			throw new RuntimeException("IO Error occurred");
+			throw new RuntimeException("IO error occurred");
 		} finally {
 			if (file != null) {
 				try {
@@ -606,16 +606,16 @@ public class Cube {
 	public static void main(String[] args) {
 		Cube cube;
 		if (args.length <= 0) {
-			cube = new Cube("input/invalid_input1.txt");
+			cube = new Cube("input/valid_input2.txt");
 		} else {
 			cube = new Cube(args[0]);
 		}
-		System.out.println(cube.toString());
-		System.out.println("Is a valid cube: " + Cube.verifyCube(cube.state));
-		if (Cube.verifyCube(cube.state)) {
-			System.out.println(cube.isSolved());
-			cube.state = Cube.rotate(cube.state, "R".charAt(0), 1);
-			System.out.println(cube);
+		Boolean validCube = Cube.verifyCube(cube.state);
+		if (validCube) {
+			String result = IDAStar.performIDAStar(cube.state, false);
+			System.out.println(result);
+		} else {
+			System.out.println("This cube is not valid");
 		}
 
 	}

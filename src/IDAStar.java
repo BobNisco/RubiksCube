@@ -16,11 +16,15 @@ public class IDAStar {
 	/**
 	 * Performs the IDA* search for our Rubik's cube.
 	 * @param startState the starting state of the cube
+	 * @param verbose true if we want to print out more details about the IDA* algorithm
+	 * @return the string that represents the optimal solution
 	 */
-	public static void performIDAStar(char[] startState) {
+	public static String performIDAStar(char[] startState, boolean verbose) {
 		// Initialize the root node with the start state
 		CubeNode start = new CubeNode(startState, corners[Integer.parseInt(Cube.encodeCorners(startState))]);
-		System.out.println("Beginning heuristic value: " + start.heuristic);
+		if (verbose) {
+			System.out.println("Beginning heuristic value: " + start.heuristic);
+		}
 		// Initialize nextBound with our starting heuristic value
 		nextBound = start.heuristic;
 		// Initialize nodesVisited
@@ -30,17 +34,20 @@ public class IDAStar {
 
 		// Loop until we find a solution
 		while (end == null) {
-			System.out.println("Current bound is: " + nextBound);
-			System.out.println("# of Nodes visited: " + nodesVisited);
+			if (verbose) {
+				System.out.println("Current bound is: " + nextBound);
+				System.out.println("# of Nodes visited: " + nodesVisited);
+			}
 			end = search(start, 0, nextBound);
 			// The iterative-deepening portion of IDA*
 			// Increment the bound if we haven't found a solution
 			nextBound++;
 		}
-
-		System.out.println("Solved!");
-		System.out.println(new Cube(end.state));
-		System.out.println(end.r);
+		if (verbose) {
+			System.out.println("Solved!");
+			System.out.println("Total # of nodes visited: " + nodesVisited);
+		}
+		return formatOptimalSolution(end.path);
 	}
 
 	/**
@@ -52,7 +59,7 @@ public class IDAStar {
 	 *              expand nodes or not
 	 * @return the node representation of the goal state
 	 */
-	public static CubeNode search(CubeNode node, int g, int bound) {
+	private static CubeNode search(CubeNode node, int g, int bound) {
 		nodesVisited++;
 		// If we have found the goal, return the goal node
 		if (Arrays.equals(node.state, Cube.GOAL.toCharArray())) {
@@ -77,12 +84,45 @@ public class IDAStar {
 	}
 
 	/**
-	 * Reads the CSV file for the CornerHeuristics and returns an
-	 * int[] of size 88179840.
-	 * @return int[88179840] where the values will be of the previously
-	 * generated heuristics for the valid corner states.
+	 * Formats the solution so that it prints out nicely. Without this function,
+	 * a solution would duplicate turns of the same face eg: O1R1R1R1.
+	 * This function will turn that solution into a prettier, O1R3.
+	 * @param solution the unformatted solution
+	 * @return a properly formatted optimal solution
 	 */
-	public static int[] readHeuristics(int h, String fileName) {
+	private static String formatOptimalSolution(String solution) {
+		char[] s = solution.toCharArray();
+		// Initialize the solution with the beginning 2 characters
+		String optimalSolution = solution.substring(0, 2);
+		for (int i = 2; i < s.length; i ++) {
+			// Add each character to the optimal solution
+			optimalSolution += s[i];
+			// If the current character is equal to the last character in the string
+			// and if i % 2 == 0 so that we are only comparing characters
+			if (s[i] == s[i - 2] && i % 2 == 0) {
+				// Get the number that we're going to increment
+				Integer oldNumber = Integer.parseInt(optimalSolution.substring(
+						optimalSolution.length() - 2, optimalSolution.length() - 1));
+				// Trim the optimal solution to remove the old number
+				optimalSolution = optimalSolution.substring(0, optimalSolution.length() - 2);
+				// Add the incremented value
+				optimalSolution += (oldNumber + 1);
+				// Manually increment i so that we skip over the values we just handled
+				// in this case.
+				i++;
+			}
+		}
+		return optimalSolution;
+	}
+
+	/**
+	 * Reads the CSV files for the heuristics and returns an int[]
+	 * where the values are the heuristic values
+	 * @param h the size of the array
+	 * @param fileName the name of the CSV file to read from
+	 * @return an int[]
+	 */
+	private static int[] readHeuristics(int h, String fileName) {
 		// Our corners heuristics array will have 88179840
 		// elements, but not all of them will have a value
 		// as we only calculated heuristics for valid corner
@@ -106,7 +146,7 @@ public class IDAStar {
 		} catch (FileNotFoundException e) {
 			throw new RuntimeException("File not found");
 		} catch (IOException e) {
-			throw new RuntimeException("IO Error occurred");
+			throw new RuntimeException("IO error occurred");
 		} finally {
 			if (file != null) {
 				try {
@@ -128,6 +168,6 @@ public class IDAStar {
 		Cube cube = new Cube("input/valid_input2.txt");
 		cube = Cube.generateRandomCube();
 		System.out.println(cube);
-		IDAStar.performIDAStar(cube.state);
+		IDAStar.performIDAStar(cube.state, true);
 	}
 }

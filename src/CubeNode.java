@@ -1,5 +1,4 @@
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Map;
 
 /**
@@ -10,13 +9,17 @@ public class CubeNode {
 	/**
 	 * The state of the cube
 	 */
+
 	public char[] state;
 	/**
 	 * The heuristic value
 	 */
 	public int heuristic;
 
-	public String r;
+	/**
+	 * The path from the goal state to this node
+	 */
+	public String path;
 
 	/**
 	 *
@@ -26,13 +29,19 @@ public class CubeNode {
 	public CubeNode(char[] state, int heuristic) {
 		this.state = state;
 		this.heuristic = heuristic;
-		this.r = "";
+		this.path = "";
 	}
 
-	public CubeNode(char[] state, int heuristic, String r) {
+	/**
+	 *
+	 * @param state the state of the cube
+	 * @param heuristic the heuristic value
+	 * @param path the current path
+	 */
+	public CubeNode(char[] state, int heuristic, String path) {
 		this.state = state;
 		this.heuristic = heuristic;
-		this.r = r;
+		this.path = path;
 	}
 
 
@@ -67,7 +76,7 @@ public class CubeNode {
 				}
 			}
 			// Add the rotated state and it's heuristic value to the successors
-			successors.add(new CubeNode(newState, IDAStar.corners[encodedCorner], node.r + face.getKey() + "1")) ;
+			successors.add(new CubeNode(newState, IDAStar.corners[encodedCorner], node.path + face.getKey() + "1")) ;
 		}
 		return successors;
 	}
