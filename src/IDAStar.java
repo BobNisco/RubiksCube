@@ -7,9 +7,9 @@ import java.util.Arrays;
 
 public class IDAStar {
 
-	public static final int[] corners = readHeuristics(88179840, "src/corners.csv");
-	public static final int[] edgesSetOne = readHeuristics(42577920, "src/edgesSetOne.csv");
-	public static final int[] edgesSetTwo = readHeuristics(42577920, "src/edgesSetTwo.csv");
+	public static final int[] corners = readHeuristics(88179840, "corners.csv");
+	public static final int[] edgesSetOne = readHeuristics(42577920, "edgesSetOne.csv");
+	public static final int[] edgesSetTwo = readHeuristics(42577920, "edgesSetTwo.csv");
 	public static int nextBound;
 	public static int nodesVisited;
 
@@ -20,6 +20,10 @@ public class IDAStar {
 	 * @return the string that represents the optimal solution
 	 */
 	public static String performIDAStar(char[] startState, boolean verbose) {
+		// Don't bother wasting CPU cycles for an already solved Cube
+		if (Arrays.equals(startState, Cube.GOAL.toCharArray())) {
+			return "The given cube is already in a solved state";
+		}
 		// Initialize the root node with the start state
 		CubeNode start = new CubeNode(startState, corners[Integer.parseInt(Cube.encodeCorners(startState))]);
 		if (verbose) {
@@ -91,28 +95,34 @@ public class IDAStar {
 	 * @return a properly formatted optimal solution
 	 */
 	private static String formatOptimalSolution(String solution) {
-		char[] s = solution.toCharArray();
-		// Initialize the solution with the beginning 2 characters
-		String optimalSolution = solution.substring(0, 2);
-		for (int i = 2; i < s.length; i ++) {
-			// Add each character to the optimal solution
-			optimalSolution += s[i];
-			// If the current character is equal to the last character in the string
-			// and if i % 2 == 0 so that we are only comparing characters
-			if (s[i] == s[i - 2] && i % 2 == 0) {
-				// Get the number that we're going to increment
-				Integer oldNumber = Integer.parseInt(optimalSolution.substring(
-						optimalSolution.length() - 2, optimalSolution.length() - 1));
-				// Trim the optimal solution to remove the old number
-				optimalSolution = optimalSolution.substring(0, optimalSolution.length() - 2);
-				// Add the incremented value
-				optimalSolution += (oldNumber + 1);
-				// Manually increment i so that we skip over the values we just handled
-				// in this case.
-				i++;
+		try {
+			char[] s = solution.toCharArray();
+			// Initialize the solution with the beginning 2 characters
+			String optimalSolution = solution.substring(0, 2);
+			for (int i = 2; i < s.length; i ++) {
+				// Add each character to the optimal solution
+				optimalSolution += s[i];
+				// If the current character is equal to the last character in the string
+				// and if i % 2 == 0 so that we are only comparing characters
+				if (s[i] == s[i - 2] && i % 2 == 0) {
+					// Get the number that we're going to increment
+					Integer oldNumber = Integer.parseInt(optimalSolution.substring(
+							optimalSolution.length() - 2, optimalSolution.length() - 1));
+					// Trim the optimal solution to remove the old number
+					optimalSolution = optimalSolution.substring(0, optimalSolution.length() - 2);
+					// Add the incremented value
+					optimalSolution += (oldNumber + 1);
+					// Manually increment i so that we skip over the values we just handled
+					// in this case.
+					i++;
+				}
 			}
+			return optimalSolution;
+		} catch (Exception e) {
+			// If anything abnormal happens while trying to format the string,
+			// just return the non-pretty version of it. This is a fail-safe.
+			return solution;
 		}
-		return optimalSolution;
 	}
 
 	/**

@@ -603,7 +603,7 @@ public class Cube {
 	public static void main(String[] args) {
 		Cube cube;
 		if (args.length <= 0) {
-			cube = new Cube("input/valid_input2.txt");
+			cube = new Cube("input/valid_input1.txt");
 		} else {
 			cube = new Cube(args[0]);
 		}
