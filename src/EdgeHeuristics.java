@@ -36,27 +36,13 @@ public class EdgeHeuristics {
 			// For each cube state we're given, we need to try all of
 			// possible turns of each other other faces
 			for (Map.Entry<Character, int[]> face : faces) {
-				// For each face, we're going to rotate it clockwise
-				// two separate times. Any more rotations will end up
-				// in just generating states that will show up in other
-				// ways, so that is not necessary
-
-				// First clockwise turn
+				// Do a clockwise turn
 				char[] newState = Cube.rotate(current.state, face.getKey(), 1);
 				int encodedEdge = Integer.parseInt(Cube.encodeEdges(newState).substring(base, limit));
 				// Check to see if this combination has been made before
 				if (edgeHeuristics[encodedEdge] == 0) {
 					// This is a new combination, let's add it to the queue
 					q.add(new CubeNode(newState, current.heuristic + 1));
-				}
-
-				// Second clockwise turn
-				newState = Cube.rotate(newState, face.getKey(), 1);
-				encodedEdge = Integer.parseInt(Cube.encodeEdges(newState).substring(base, limit));
-				// Check to see if this combination has been made before
-				if (edgeHeuristics[encodedEdge] == 0) {
-					// This is a new combination, let's add it to the queue
-					q.add(new CubeNode(newState, current.heuristic + 2));
 				}
 			}
 

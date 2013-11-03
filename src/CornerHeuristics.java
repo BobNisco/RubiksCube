@@ -24,22 +24,13 @@ public class CornerHeuristics {
 			// For each cube state we're given, we need to try all of
 			// possible turns of each other other faces
 			for (Map.Entry<Character, int[]> face : faces) {
-				// First clockwise turn
+				// Do a clockwise turn
 				char[] newState = Cube.rotate(current.state, face.getKey(), 1);
 				int encodedCorner = Integer.parseInt(Cube.encodeCorners(newState));
 				// Check to see if this combination has been made before
 				if (corners[encodedCorner] == 0) {
 					// This is a new combination, let's add it to the queue
 					q.add(new CubeNode(newState, current.heuristic + 1));
-				}
-
-				// Second clockwise turn
-				newState = Cube.rotate(newState, face.getKey(), 1);
-				encodedCorner = Integer.parseInt(Cube.encodeCorners(newState));
-				// Check to see if this combination has been made before
-				if (corners[encodedCorner] == 0) {
-					// This is a new combination, let's add it to the queue
-					q.add(new CubeNode(newState, current.heuristic + 2));
 				}
 			}
 
