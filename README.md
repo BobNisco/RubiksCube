@@ -18,3 +18,16 @@ Solution
 Relaxed Constraints
 ---------------------------
 - Only handle clockwise turns of a face
+
+Running the Solver
+------------------
+Compile the Java source files in src directory:
+- `cd src`
+- `javac *.java`
+
+If you would like to generate the heuristic tables, you can run the generateHeuristics.sh file in src directory after giving it sufficient privileges:
+- `chmod 777 generateHeuristics.sh`
+-	`./generateHeuristics.sh`
+
+To run the program to solve a cube from a file:
+- `java Cube "Full file path to input file"`
