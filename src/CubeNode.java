@@ -4,8 +4,10 @@ import java.util.Map;
 /**
  * While doing the BFS to enumerate all valid permutations in a cube,
  * this will keep track of states and their heuristic value.
+ * Implements the Comparable interface to allow for easy comparison of
+ * during IDA* to determine which node has the lower heuristic.
  */
-public class CubeNode {
+public class CubeNode implements Comparable<CubeNode> {
 	/**
 	 * The state of the cube
 	 */
@@ -79,5 +81,15 @@ public class CubeNode {
 			successors.add(new CubeNode(newState, IDAStar.corners[encodedCorner], node.path + face.getKey() + "1")) ;
 		}
 		return successors;
+	}
+
+	@Override
+	public int compareTo(CubeNode b) {
+		if (this.heuristic < b.heuristic) {
+			return -1;
+		} else if (this.heuristic > b.heuristic) {
+			return 1;
+		}
+		return 0;
 	}
 }

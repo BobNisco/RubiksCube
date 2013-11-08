@@ -2,16 +2,17 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.*;
 
 public class IDAStar {
 
-	public static final int[] corners = readHeuristics(88179840, "corners.csv");
-	public static final int[] edgesSetOne = readHeuristics(42577920, "edgesSetOne.csv");
-	public static final int[] edgesSetTwo = readHeuristics(42577920, "edgesSetTwo.csv");
+	public static final int[] corners = readHeuristics(88179840, "src/corners.csv");
+	public static final int[] edgesSetOne = readHeuristics(42577920, "src/edgesSetOne.csv");
+	public static final int[] edgesSetTwo = readHeuristics(42577920, "src/edgesSetTwo.csv");
 	public static int nextBound;
 	public static int nodesVisited;
+	public static PriorityQueue<CubeNode> frontier = new PriorityQueue<CubeNode>();
+	public static HashSet<CubeNode> explored = new HashSet<CubeNode>();
 
 	/**
 	 * Performs the IDA* search for our Rubik's cube.
@@ -26,6 +27,7 @@ public class IDAStar {
 		}
 		// Initialize the root node with the start state
 		CubeNode start = new CubeNode(startState, corners[Integer.parseInt(Cube.encodeCorners(startState))]);
+		// And put the start node on the openSet
 		if (verbose) {
 			System.out.println("Beginning heuristic value: " + start.heuristic);
 		}
@@ -42,10 +44,14 @@ public class IDAStar {
 				System.out.println("Current bound is: " + nextBound);
 				System.out.println("# of Nodes visited: " + nodesVisited);
 			}
-			end = search(start, 0, nextBound);
+			frontier.add(start);
+			end = search(frontier.poll(), 0, nextBound);
 			// The iterative-deepening portion of IDA*
 			// Increment the bound if we haven't found a solution
 			nextBound++;
+			// Reset the frontier and exploredSet
+			frontier.clear();
+			explored.clear();
 		}
 		if (verbose) {
 			System.out.println("Solved!");
@@ -65,6 +71,7 @@ public class IDAStar {
 	 */
 	private static CubeNode search(CubeNode node, int g, int bound) {
 		nodesVisited++;
+		explored.add(node);
 		// If we have found the goal, return the goal node
 		if (Arrays.equals(node.state, Cube.GOAL.toCharArray())) {
 			return node;
@@ -73,15 +80,26 @@ public class IDAStar {
 		ArrayList<CubeNode> successors = CubeNode.getSuccessors(node);
 		// Iterate over each of the successors
 		for (CubeNode successor : successors) {
-			// Calculate f for this successor node
-			int f = g + successor.heuristic;
-			// Don't expand more nodes if we are above the bound
-			if (f <= bound) {
-				// Expand this node's successors
-				CubeNode t = search(successor, g + 1, bound);
-				if (t != null) {
-					return t;
-				}
+			if (!explored.contains(successor)) {
+/*				// Calculate f for this successor node
+				int f = g + successor.heuristic;*/
+				frontier.add(successor);
+/*				// Don't expand more nodes if we are above the bound
+				if (f <= bound) {
+					// Expand this node's successors
+					CubeNode t = search(successor, g + 1, bound);
+					if (t != null) {
+						return t;
+					}
+				}*/
+			}
+		}
+		CubeNode next = frontier.poll();
+		int f = g + next.heuristic;
+		if (f <= bound && !explored.contains(next)) {
+			CubeNode t = search(next, g + 1, bound);
+			if (t != null) {
+				return t;
 			}
 		}
 		return null;
@@ -175,9 +193,10 @@ public class IDAStar {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		Cube cube = new Cube("input/valid_input2.txt");
-		cube = Cube.generateRandomCube();
+		Cube cube = new Cube("input/cube01");
+		//cube = Cube.generateRandomCube();
 		System.out.println(cube);
-		IDAStar.performIDAStar(cube.state, true);
+		String result = IDAStar.performIDAStar(cube.state, true);
+		System.out.println(result);
 	}
 }
