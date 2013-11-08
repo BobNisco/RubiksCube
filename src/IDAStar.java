@@ -80,28 +80,25 @@ public class IDAStar {
 		ArrayList<CubeNode> successors = CubeNode.getSuccessors(node);
 		// Iterate over each of the successors
 		for (CubeNode successor : successors) {
+			// Check to make sure that we haven't visited this node
 			if (!explored.contains(successor)) {
-/*				// Calculate f for this successor node
-				int f = g + successor.heuristic;*/
+				// Add it to our frontier
 				frontier.add(successor);
-/*				// Don't expand more nodes if we are above the bound
-				if (f <= bound) {
-					// Expand this node's successors
-					CubeNode t = search(successor, g + 1, bound);
-					if (t != null) {
-						return t;
+				// Poll for the next best node with the lowest heuristic
+				CubeNode next = frontier.poll();
+				while (next != null) {
+					int f = g + next.heuristic;
+					if (f <= bound && !explored.contains(next)) {
+						CubeNode t = search(next, g + 1, bound);
+						if (t != null) {
+							return t;
+						}
 					}
-				}*/
+					next = frontier.poll();
+				}
 			}
 		}
-		CubeNode next = frontier.poll();
-		int f = g + next.heuristic;
-		if (f <= bound && !explored.contains(next)) {
-			CubeNode t = search(next, g + 1, bound);
-			if (t != null) {
-				return t;
-			}
-		}
+
 		return null;
 	}
 
