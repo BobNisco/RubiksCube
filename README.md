@@ -30,4 +30,4 @@ If you would like to generate the heuristic tables, you can run the generateHeur
 -	`./generateHeuristics.sh`
 
 To run the program to solve a cube from a file:
-- `java Cube "Full file path to input file"`
+- `java -Xmx2048M Cube "Full file path to input file"`
