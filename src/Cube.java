@@ -609,7 +609,11 @@ public class Cube {
 		}
 		Boolean validCube = Cube.verifyCube(cube.state);
 		if (validCube) {
-			String result = IDAStar.performIDAStar(cube.state, true);
+			boolean verbose = false;
+			if (args.length > 1) {
+				verbose = Boolean.parseBoolean(args[1]);
+			}
+			String result = IDAStar.performIDAStar(cube.state, verbose);
 			System.out.println(result);
 		} else {
 			System.out.println("This cube is not valid");

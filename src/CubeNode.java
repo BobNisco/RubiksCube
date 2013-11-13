@@ -19,6 +19,11 @@ public class CubeNode implements Comparable<CubeNode> {
 	public int heuristic;
 
 	/**
+	 * The g value
+	 */
+	public int g;
+
+	/**
 	 * The path from the goal state to this node
 	 */
 	public String path;
@@ -31,6 +36,7 @@ public class CubeNode implements Comparable<CubeNode> {
 	public CubeNode(char[] state, int heuristic) {
 		this.state = state;
 		this.heuristic = heuristic;
+		this.g = 0;
 		this.path = "";
 	}
 
@@ -43,9 +49,23 @@ public class CubeNode implements Comparable<CubeNode> {
 	public CubeNode(char[] state, int heuristic, String path) {
 		this.state = state;
 		this.heuristic = heuristic;
+		this.g = 0;
 		this.path = path;
 	}
 
+	/**
+	 *
+	 * @param state the state of the cube
+	 * @param heuristic the heuristic value
+	 * @param g the current g value
+	 * @param path the current path
+	 */
+	public CubeNode(char[] state, int heuristic, int g, String path) {
+		this.state = state;
+		this.heuristic = heuristic;
+		this.g = g;
+		this.path = path;
+	}
 
 	/**
 	 * Generates all successors of the given node.

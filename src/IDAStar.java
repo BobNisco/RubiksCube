@@ -6,9 +6,9 @@ import java.util.*;
 
 public class IDAStar {
 
-	public static final int[] corners = readHeuristics(88179840, "src/corners.csv");
-	public static final int[] edgesSetOne = readHeuristics(42577920, "src/edgesSetOne.csv");
-	public static final int[] edgesSetTwo = readHeuristics(42577920, "src/edgesSetTwo.csv");
+	public static final int[] corners = readHeuristics(88179840, "corners.csv");
+	public static final int[] edgesSetOne = readHeuristics(42577920, "edgesSetOne.csv");
+	public static final int[] edgesSetTwo = readHeuristics(42577920, "edgesSetTwo.csv");
 	public static int nextBound;
 	public static int nodesVisited;
 	public static PriorityQueue<CubeNode> frontier = new PriorityQueue<CubeNode>();
@@ -45,7 +45,7 @@ public class IDAStar {
 				System.out.println("# of Nodes visited: " + nodesVisited);
 			}
 			frontier.add(start);
-			end = search(frontier.poll(), 0, nextBound);
+			end = search(frontier.peek(), nextBound);
 			// The iterative-deepening portion of IDA*
 			// Increment the bound if we haven't found a solution
 			nextBound++;
@@ -69,36 +69,42 @@ public class IDAStar {
 	 *              expand nodes or not
 	 * @return the node representation of the goal state
 	 */
-	private static CubeNode search(CubeNode node, int g, int bound) {
+	private static CubeNode search(CubeNode node, int bound) {
 		nodesVisited++;
-		explored.add(node);
-		// If we have found the goal, return the goal node
-		if (Arrays.equals(node.state, Cube.GOAL.toCharArray())) {
-			return node;
-		}
-		// Get all of the possible successors from the given node
-		ArrayList<CubeNode> successors = CubeNode.getSuccessors(node);
-		// Iterate over each of the successors
-		for (CubeNode successor : successors) {
-			// Check to make sure that we haven't visited this node
-			if (!explored.contains(successor)) {
-				// Add it to our frontier
-				frontier.add(successor);
-				// Poll for the next best node with the lowest heuristic
-				CubeNode next = frontier.poll();
-				while (next != null) {
-					int f = g + next.heuristic;
-					if (f <= bound && !explored.contains(next)) {
-						CubeNode t = search(next, g + 1, bound);
-						if (t != null) {
-							return t;
-						}
-					}
-					next = frontier.poll();
+
+		while (!frontier.isEmpty()) {
+			nodesVisited++;
+			CubeNode current = frontier.poll();
+			// If we have found the goal, return the goal node
+			if (Arrays.equals(current.state, Cube.GOAL.toCharArray())) {
+				return current;
+			}
+			explored.add(current);
+			// Get all of the possible successors from the given node
+			ArrayList<CubeNode> successors = CubeNode.getSuccessors(current);
+			// Iterate over each of the successors
+			for (CubeNode successor : successors) {
+				int f = current.g + successor.heuristic;
+				successor.g = current.g + 1;
+				if (f <= bound && !explored.contains(successor)) {
+					// Add it to our frontier
+					frontier.add(successor);
 				}
 			}
 		}
 
+/*		// Poll for the next best node with the lowest heuristic
+		CubeNode next = frontier.poll();
+		while (next != null) {
+			int f = g + next.heuristic;
+			if (f <= bound && !explored.contains(next)) {
+				CubeNode t = search(next, g + 1, bound);
+				if (t != null) {
+					return t;
+				}
+			}
+			next = frontier.poll();
+		}*/
 		return null;
 	}
 
@@ -190,7 +196,7 @@ public class IDAStar {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		Cube cube = new Cube("input/cube01");
+		Cube cube = new Cube("input/cube07");
 		//cube = Cube.generateRandomCube();
 		System.out.println(cube);
 		String result = IDAStar.performIDAStar(cube.state, true);
