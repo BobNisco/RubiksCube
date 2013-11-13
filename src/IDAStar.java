@@ -45,7 +45,7 @@ public class IDAStar {
 				System.out.println("# of Nodes visited: " + nodesVisited);
 			}
 			frontier.add(start);
-			end = search(frontier.peek(), nextBound);
+			end = search(nextBound);
 			// The iterative-deepening portion of IDA*
 			// Increment the bound if we haven't found a solution
 			nextBound++;
@@ -63,13 +63,11 @@ public class IDAStar {
 	/**
 	 * The recursive expanding function that will expand nodes as per
 	 * the rules of IDA*
-	 * @param node the current node
-	 * @param g the current value of g
 	 * @param bound the current bound - used to determine if we should
 	 *              expand nodes or not
 	 * @return the node representation of the goal state
 	 */
-	private static CubeNode search(CubeNode node, int bound) {
+	private static CubeNode search(int bound) {
 		nodesVisited++;
 
 		while (!frontier.isEmpty()) {
@@ -79,6 +77,7 @@ public class IDAStar {
 			if (Arrays.equals(current.state, Cube.GOAL.toCharArray())) {
 				return current;
 			}
+			// Add this current node to our explored set
 			explored.add(current);
 			// Get all of the possible successors from the given node
 			ArrayList<CubeNode> successors = CubeNode.getSuccessors(current);
@@ -92,19 +91,7 @@ public class IDAStar {
 				}
 			}
 		}
-
-/*		// Poll for the next best node with the lowest heuristic
-		CubeNode next = frontier.poll();
-		while (next != null) {
-			int f = g + next.heuristic;
-			if (f <= bound && !explored.contains(next)) {
-				CubeNode t = search(next, g + 1, bound);
-				if (t != null) {
-					return t;
-				}
-			}
-			next = frontier.poll();
-		}*/
+		// We did not find the solution at this bound
 		return null;
 	}
 
